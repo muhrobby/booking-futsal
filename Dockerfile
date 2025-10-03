@@ -83,3 +83,4 @@ EXPOSE 8002
 HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 CMD curl -f http://localhost:${APACHE_LISTEN_PORT}/ || exit 1
 
 CMD ["apache2-foreground"]
+RUN rm -rf bootstrap/cache/*
