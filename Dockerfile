@@ -9,6 +9,14 @@ RUN composer install \
     --no-dev \
     --prefer-dist \
     --optimize-autoloader \
+    --no-interaction \
+    --no-scripts
+
+COPY . ./
+RUN composer install \
+    --no-dev \
+    --prefer-dist \
+    --optimize-autoloader \
     --no-interaction
 
 ## ---------- Frontend build ----------
