@@ -1,0 +1,46 @@
+services:
+    app:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        container_name: booking-futsal-app
+        restart: unless-stopped
+        env_file:
+            - .env
+        environment:
+            APP_ENV: ${APP_ENV:-production}
+            APP_DEBUG: ${APP_DEBUG:-false}
+            APP_URL: ${APP_URL:-kelompok1-futsal.humahub.my.id}
+            DB_CONNECTION: sqlite
+            DB_DATABASE: /var/www/html/storage/database/database.sqlite
+        volumes:
+            - storage:/var/www/html/storage
+        ports:
+            - "8002:8002"
+        labels:
+            - traefik.enable=true
+            - traefik.docker.network=traefik-proxy
+            - traefik.http.routers.futsal.rule=Host(`kelompok1-futsal.humahub.my.id`)
+            - traefik.http.routers.futsal.entrypoints=websecure
+            - traefik.http.routers.futsal.tls=true
+            - traefik.http.routers.futsal.tls.certresolver=cf
+            - traefik.http.services.futsal.loadbalancer.server.port=8002
+            - traefik.http.routers.futsal.middlewares=futsal-security,futsal-rl
+            - traefik.http.middlewares.futsal-security.headers.stsSeconds=31536000
+            - traefik.http.middlewares.futsal-security.headers.stsIncludeSubdomains=true
+            - traefik.http.middlewares.futsal-security.headers.stsPreload=true
+            - traefik.http.middlewares.futsal-security.headers.frameDeny=true
+            - traefik.http.middlewares.futsal-security.headers.contentTypeNosniff=true
+            - traefik.http.middlewares.futsal-security.headers.referrerPolicy=no-referrer-when-downgrade
+            - traefik.http.middlewares.futsal-rl.ratelimit.average=120
+            - traefik.http.middlewares.futsal-rl.ratelimit.burst=240
+        networks:
+            - default
+            - traefik-proxy
+
+volumes:
+    storage:
+
+networks:
+    traefik-proxy:
+        external: true

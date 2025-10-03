@@ -1,15 +1,18 @@
 @extends('layouts.app')
 
 @section('content')
-    <section class="hero-gradient rounded-3xl px-6 py-16 text-center shadow-lg sm:px-10">
-        <div class="mx-auto max-w-3xl space-y-6">
-            <h1 class="text-3xl font-semibold leading-tight sm:text-4xl">Booking Lapangan Futsal Jadi Mudah</h1>
-            <p class="text-base text-slate-100/90 sm:text-lg">Pilih lapangan favorit, cek ketersediaan jadwal, dan lakukan reservasi hanya dengan beberapa klik.</p>
-            <a href="{{ route('schedule.index') }}" class="inline-flex items-center justify-center rounded-full bg-white px-6 py-3 font-semibold text-blue-600 shadow-md transition hover:shadow-lg">Cari Jadwal</a>
+    <section class="hero-banner rounded-3xl px-6 py-24 text-white shadow-xl sm:px-12">
+        <div class="mx-auto flex max-w-4xl flex-col items-start gap-6 text-left">
+            <div>
+                {{-- <p class="text-sm font-semibold uppercase tracking-[0.35em] text-white/80">Mardha Futsal</p> --}}
+                <h1 class="mt-4 text-4xl font-extrabold leading-tight sm:text-5xl">Booking Lapangan Futsal Jadi Lebih Mudah!</h1>
+            </div>
+            <p class="text-lg text-white/90 sm:text-xl">Pilih Lapangan, Atur Jadwal, Main Tanpa Ribettt.</p>
+            <a href="{{ route('schedule.index') }}" class="inline-flex items-center justify-center rounded-full border border-white/70 px-8 py-3 text-sm font-semibold uppercase tracking-[0.35em] text-white transition hover:bg-white/15">Booking Now</a>
         </div>
     </section>
 
-    <section class="mt-10 space-y-6">
+    {{-- <section class="mt-14 space-y-6">
         <div class="flex items-center justify-between">
             <h2 class="text-lg font-semibold text-slate-700">Lapangan Populer</h2>
         </div>
@@ -29,5 +32,5 @@
                 @endforeach
             </div>
         @endif
-    </section>
+    </section> --}}
 @endsection

@@ -36,37 +36,39 @@
             </div>
         </form>
 
-        <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-            <table class="min-w-full divide-y divide-slate-200 text-sm">
-                <thead class="bg-slate-50 text-left text-xs font-semibold uppercase tracking-wide text-slate-600">
-                    <tr>
-                        <th class="px-6 py-3">Jam</th>
-                        <th class="px-6 py-3">Status</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-slate-100 text-slate-700">
-                @foreach ($timeSlots as $timeSlotOption)
-                    @php
-                        $booking = $bookings->get($timeSlotOption->id);
-                        // Hitung jam mulai untuk menentukan apakah slot sudah lewat.
-                        $slotStart = $selectedDateCarbon->copy()->setTimeFromTimeString($timeSlotOption->start_time->format('H:i:s'));
-                        $isPast = $slotStart->lt($now);
-                    @endphp
-                    <tr class="hover:bg-slate-50">
-                        <td class="px-6 py-4 font-medium">{{ $timeSlotOption->label }}</td>
-                        <td class="px-6 py-4">
-                            @if ($booking)
-                                <span class="inline-flex items-center rounded-full bg-rose-100 px-3 py-1 text-xs font-semibold text-rose-700">Sudah dibooking oleh {{ $booking->customer_name }}</span>
-                            @elseif ($selectedDateCarbon->isToday() && $isPast)
-                                <span class="inline-flex items-center rounded-full bg-slate-200 px-3 py-1 text-xs font-semibold text-slate-600">Sudah lewat</span>
-                            @else
-                                <span class="inline-flex items-center rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">Tersedia</span>
-                            @endif
-                        </td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
+        <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+            @foreach ($timeSlots as $timeSlotOption)
+                @php
+                    $booking = $bookings->get($timeSlotOption->id);
+                    // Hitung jam mulai untuk menentukan apakah slot sudah lewat.
+                    $slotStart = $selectedDateCarbon->copy()->setTimeFromTimeString($timeSlotOption->start_time->format('H:i:s'));
+                    $isPast = $slotStart->lt($now);
+
+                    $statusBadgeClasses = 'bg-emerald-100 text-emerald-700';
+                    $statusText = 'Tersedia';
+                    $statusDescription = 'Slot ini masih tersedia untuk dipesan.';
+
+                    if ($booking) {
+                        $statusBadgeClasses = 'bg-rose-100 text-rose-700';
+                        $statusText = 'Sudah dibooking';
+                        $statusDescription = 'Sudah dibooking oleh ' . $booking->customer_name . '.';
+                    } elseif ($selectedDateCarbon->isToday() && $isPast) {
+                        $statusBadgeClasses = 'bg-slate-200 text-slate-600';
+                        $statusText = 'Sudah lewat';
+                        $statusDescription = 'Slot ini sudah melewati jam mulai.';
+                    }
+                @endphp
+                <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:border-slate-300 hover:shadow-md">
+                    <div class="flex items-start justify-between gap-4">
+                        <div>
+                            <p class="text-xs font-medium uppercase tracking-wide text-slate-500">Jam</p>
+                            <p class="text-lg font-semibold text-slate-800">{{ $timeSlotOption->label }}</p>
+                        </div>
+                        <span class="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold {{ $statusBadgeClasses }}">{{ $statusText }}</span>
+                    </div>
+                    <p class="mt-4 text-sm text-slate-500">{{ $statusDescription }}</p>
+                </div>
+            @endforeach
         </div>
     </div>
 @endsection

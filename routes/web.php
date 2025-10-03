@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', HomeController::class)->name('home');
 Route::get('/fields', [FieldController::class, 'index'])->name('fields.index');
 Route::get('/schedule', [ScheduleController::class, 'index'])->name('schedule.index');
+Route::view('/contact', 'contact')->name('contact');
 
 Route::view('dashboard', 'dashboard')->middleware(['auth', 'verified'])->name('dashboard');
 Route::view('profile', 'profile')->middleware(['auth'])->name('profile');

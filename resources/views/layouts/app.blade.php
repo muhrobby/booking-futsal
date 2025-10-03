@@ -4,7 +4,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ config('app.name', 'Futsal Booking') }}</title>
+    <title>{{ config('app.name', 'Futsal Neo S') }}</title>
+    <x-favicon />
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="bg-slate-100 font-sans antialiased">
@@ -12,10 +13,12 @@
         <nav class="bg-slate-900 text-white">
             <div class="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
                 <div class="flex items-center gap-6">
-                    <a href="{{ route('home') }}" class="text-lg font-semibold tracking-tight">Futsal Booking</a>
+                    <a href="{{ route('home') }}" class="text-lg font-semibold tracking-tight">Futsal Neo S</a>
                     <div class="flex flex-wrap items-center gap-4 text-sm">
+                        <a href="{{ route('home') }}" class="transition hover:text-slate-300">Home</a>
                         <a href="{{ route('fields.index') }}" class="transition hover:text-slate-300">Lapangan</a>
                         <a href="{{ route('schedule.index') }}" class="transition hover:text-slate-300">Jadwal</a>
+                        <a href="{{ route('contact') }}" class="transition hover:text-slate-300">Kontak</a>
                         @auth
                             <a href="{{ route('bookings.my') }}" class="transition hover:text-slate-300">Booking Saya</a>
                             @can('access-admin')
@@ -64,9 +67,19 @@
             </div>
         </main>
 
-        <footer class="bg-slate-900 py-6 text-center text-xs text-slate-400">
+        <footer class="bg-slate-900 py-8 text-center text-xs text-slate-400">
             <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-                &copy; {{ now()->year }} Futsal Booking. All rights reserved.
+                <div class="mx-auto max-w-4xl text-slate-200">
+                    <p class="text-sm font-semibold uppercase tracking-wide text-slate-300">Kelompok</p>
+                    <div class="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                        <div class="rounded-2xl border border-slate-800 bg-slate-800/60 p-4 text-sm font-medium shadow-inner">231011400110 ALFINA DWI ARYANI</div>
+                        <div class="rounded-2xl border border-slate-800 bg-slate-800/60 p-4 text-sm font-medium shadow-inner">231011402443 DEVIN SLAMET</div>
+                        <div class="rounded-2xl border border-slate-800 bg-slate-800/60 p-4 text-sm font-medium shadow-inner">231011400127 HERI PURNOMO</div>
+                        <div class="rounded-2xl border border-slate-800 bg-slate-800/60 p-4 text-sm font-medium shadow-inner">231011400102 MARIA FRANSISKA LAMAPAHA</div>
+                        <div class="rounded-2xl border border-slate-800 bg-slate-800/60 p-4 text-sm font-medium shadow-inner">231011400132 MUHAMMAD ROBBY</div>
+                    </div>
+                </div>
+                <p class="mt-6 text-[11px] tracking-wide text-slate-500">&copy; {{ now()->year }} Futsal Neo S. All rights reserved.</p>
             </div>
         </footer>
     </div>
