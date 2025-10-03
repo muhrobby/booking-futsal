@@ -71,6 +71,7 @@ COPY --from=frontend /app/public/build ./public/build
 
 RUN mkdir -p storage/database \
     && touch storage/database/database.sqlite \
+    && mkdir -p bootstrap/cache \
     && mkdir -p storage/framework/cache storage/framework/sessions storage/framework/views \
     && chown -R www-data:www-data storage bootstrap/cache \
     && chmod -R ug+rwx storage bootstrap/cache
