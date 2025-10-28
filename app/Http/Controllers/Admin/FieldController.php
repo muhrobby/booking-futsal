@@ -26,6 +26,7 @@ class FieldController extends Controller
     {
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
+            'location' => ['nullable', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
             'price_per_hour' => ['required', 'integer', 'min:0'],
             'is_active' => ['nullable', 'boolean'],
@@ -35,7 +36,7 @@ class FieldController extends Controller
 
         Field::create($validated);
 
-        return redirect()->route('admin.fields.index')->with('status', 'Lapangan berhasil ditambahkan.');
+        return redirect()->route('admin.fields.index')->with('success', 'Lapangan berhasil ditambahkan.');
     }
 
     public function edit(Field $field): View
@@ -47,6 +48,7 @@ class FieldController extends Controller
     {
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
+            'location' => ['nullable', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
             'price_per_hour' => ['required', 'integer', 'min:0'],
             'is_active' => ['nullable', 'boolean'],
@@ -56,13 +58,13 @@ class FieldController extends Controller
 
         $field->update($validated);
 
-        return redirect()->route('admin.fields.index')->with('status', 'Lapangan berhasil diperbarui.');
+        return redirect()->route('admin.fields.index')->with('success', 'Lapangan berhasil diperbarui.');
     }
 
     public function destroy(Field $field): RedirectResponse
     {
         $field->delete();
 
-        return redirect()->route('admin.fields.index')->with('status', 'Lapangan dihapus.');
+        return redirect()->route('admin.fields.index')->with('success', 'Lapangan berhasil dihapus.');
     }
 }

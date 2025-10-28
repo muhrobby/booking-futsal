@@ -1,86 +1,121 @@
-# syntax=docker/dockerfile:1.6
-
-## ---------- Composer dependencies ----------
+############################
+# Stage 1: Composer Dependencies
+############################
 FROM composer:2.8 AS vendor
+
 WORKDIR /app
 
-COPY composer.json composer.lock* ./
+# Copy composer files
+COPY composer.json composer.lock ./
+
+# Install dependencies (production mode)
 RUN composer install \
     --no-dev \
     --prefer-dist \
     --optimize-autoloader \
     --no-interaction \
-    --no-scripts
+    --no-scripts \
+    --no-progress
 
-COPY . ./
-RUN composer install \
-    --no-dev \
-    --prefer-dist \
-    --optimize-autoloader \
-    --no-interaction
+# Copy source code and dump autoload
+COPY . .
+RUN composer dump-autoload --optimize --no-scripts
 
-## ---------- Frontend build ----------
-FROM node:20 AS frontend
+############################
+# Stage 2: Frontend Build
+############################
+FROM node:20-alpine AS frontend
+
 WORKDIR /app
 
-COPY package.json package-lock.json* ./
-RUN npm ci
+# Copy package files
+COPY package.json package-lock.json ./
 
+# Install npm dependencies
+RUN npm ci --only=production
+
+# Copy source files needed for build
 COPY resources ./resources
-COPY tailwind.config.js postcss.config.js vite.config.js ./
 COPY public ./public
+COPY tailwind.config.js postcss.config.js vite.config.js ./
+
+# Build assets
 RUN npm run build
 
-## ---------- Runtime image ----------
-FROM php:8.3-apache
-WORKDIR /var/www/html
+############################
+# Stage 3: PHP-FPM Runtime
+############################
+FROM php:8.2-fpm
 
-ENV APACHE_DOCUMENT_ROOT=/var/www/html/public \
-    APACHE_LISTEN_PORT=8002
+WORKDIR /var/www
 
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
-        git \
-        curl \
-        unzip \
-        libicu-dev \
-        libzip-dev \
-        libpng-dev \
-        libjpeg62-turbo-dev \
-        libfreetype6-dev \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install \
-        bcmath \
-        exif \
-        gd \
-        intl \
-        opcache \
-        pdo_mysql \
-        zip \
-    && a2enmod rewrite \
-    && sed -ri "s!80!${APACHE_LISTEN_PORT}!g" /etc/apache2/ports.conf \
-    && sed -ri "s!80!${APACHE_LISTEN_PORT}!g" /etc/apache2/sites-available/000-default.conf \
-    && sed -ri "s!/var/www/html!${APACHE_DOCUMENT_ROOT}!g" /etc/apache2/sites-available/000-default.conf \
-    && sed -ri "s!<Directory /var/www/>!<Directory ${APACHE_DOCUMENT_ROOT}/>!g" /etc/apache2/apache2.conf \
+    git \
+    curl \
+    libpng-dev \
+    libjpeg-dev \
+    libfreetype6-dev \
+    libzip-dev \
+    libicu-dev \
+    unzip \
     && rm -rf /var/lib/apt/lists/*
 
-COPY . ./
-COPY --from=vendor /app/vendor ./vendor
-COPY --from=vendor /app/composer.lock ./composer.lock
-COPY --from=vendor /app/composer.json ./composer.json
-COPY --from=frontend /app/public/build ./public/build
+# Install PHP extensions
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j$(nproc) \
+        pdo_mysql \
+        gd \
+        zip \
+        intl \
+        bcmath \
+        opcache
 
-RUN mkdir -p storage/database \
-    && touch storage/database/database.sqlite \
-    && mkdir -p bootstrap/cache \
-    && mkdir -p storage/framework/cache storage/framework/sessions storage/framework/views \
+# Configure OPcache for production
+RUN { \
+    echo 'opcache.enable=1'; \
+    echo 'opcache.enable_cli=1'; \
+    echo 'opcache.memory_consumption=256'; \
+    echo 'opcache.interned_strings_buffer=16'; \
+    echo 'opcache.max_accelerated_files=20000'; \
+    echo 'opcache.validate_timestamps=0'; \
+    echo 'opcache.save_comments=1'; \
+    echo 'opcache.fast_shutdown=0'; \
+    } > /usr/local/etc/php/conf.d/opcache.ini
+
+# Configure PHP
+RUN { \
+    echo 'memory_limit=512M'; \
+    echo 'upload_max_filesize=20M'; \
+    echo 'post_max_size=20M'; \
+    echo 'max_execution_time=300'; \
+    } > /usr/local/etc/php/conf.d/custom.ini
+
+# Copy application code
+COPY --chown=www-data:www-data . /var/www
+
+# Copy vendor from composer stage
+COPY --from=vendor --chown=www-data:www-data /app/vendor /var/www/vendor
+
+# Copy built assets from frontend stage
+COPY --from=frontend --chown=www-data:www-data /app/public/build /var/www/public/build
+
+# Create necessary directories
+RUN mkdir -p \
+    storage/framework/cache \
+    storage/framework/sessions \
+    storage/framework/views \
+    storage/logs \
+    bootstrap/cache \
     && chown -R www-data:www-data storage bootstrap/cache \
-    && chmod -R ug+rwx storage bootstrap/cache
+    && chmod -R 775 storage bootstrap/cache
 
-ENV APP_ENV=production \
-    APP_DEBUG=false
+# Expose PHP-FPM port
+EXPOSE 9000
 
-EXPOSE 8002
-HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 CMD curl -f http://localhost:${APACHE_LISTEN_PORT}/ || exit 1
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
+    CMD php-fpm-healthcheck || exit 1
 
-CMD ["apache2-foreground"]
-RUN rm -rf bootstrap/cache/*
+# Run PHP-FPM
+CMD ["php-fpm"]

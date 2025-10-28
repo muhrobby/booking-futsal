@@ -19,9 +19,9 @@ class BookingController extends Controller
 
         $bookings = Booking::query()
             ->with(['field', 'timeSlot', 'user'])
-            ->when($request->filled('field_id'), fn ($query) => $query->where('field_id', $request->integer('field_id')))
-            ->when($request->filled('status'), fn ($query) => $query->where('status', $request->string('status')))
-            ->when($request->filled('date'), fn ($query) => $query->whereDate('booking_date', $request->date('date')))
+            ->when($request->filled('field_id'), fn ($query) => $query->where('field_id', $request->field_id))
+            ->when($request->filled('status'), fn ($query) => $query->where('status', $request->status))
+            ->when($request->filled('date'), fn ($query) => $query->whereDate('booking_date', $request->date))
             ->orderByDesc('booking_date')
             ->orderBy('time_slot_id')
             ->paginate(15)
@@ -44,13 +44,7 @@ class BookingController extends Controller
 
         $booking->update($validated);
 
-        $filters = array_filter([
-            'field_id' => $request->input('filter_field_id'),
-            'status' => $request->input('filter_status'),
-            'date' => $request->input('filter_date'),
-        ], fn ($value) => filled($value));
-
-        return redirect()->route('admin.bookings.index', $filters)
-            ->with('status', 'Status booking diperbarui.');
+        return redirect()->route('admin.bookings.index')
+            ->with('success', 'Status booking berhasil diperbarui.');
     }
 }

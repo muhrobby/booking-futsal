@@ -58,36 +58,40 @@ class BookingController extends Controller
 
     public function myBookings(Request $request): View
     {
-        $phone = $request->string('phone')->toString();
         $user = $request->user();
+        $query = Booking::query()->with(['field', 'timeSlot']);
 
-        // Jika user tidak mengisi nomor HP, gunakan nomor yang tersimpan di profilnya.
-        if (! $phone && $user?->phone) {
-            $phone = $user->phone;
+        // Filter by status
+        if ($request->filled('status')) {
+            $query->where('status', $request->input('status'));
         }
 
-        // Ambil riwayat booking berdasarkan nomor HP atau akun login.
-        $bookings = Booking::query()
-            ->with(['field', 'timeSlot'])
-            ->when($phone || $user, function ($query) use ($phone, $user) {
-                $query->where(function ($subQuery) use ($phone, $user) {
-                    if ($phone) {
-                        $subQuery->where('customer_phone', $phone);
-                    }
+        // Filter by date range
+        if ($request->filled('date_from')) {
+            $query->whereDate('booking_date', '>=', $request->input('date_from'));
+        }
 
-                    if ($user) {
-                        $subQuery->orWhere('user_id', $user->id);
-                    }
-                });
-            })
-            ->latest('booking_date')
-            ->latest('time_slot_id')
-            ->limit(30)
-            ->get();
+        if ($request->filled('date_to')) {
+            $query->whereDate('booking_date', '<=', $request->input('date_to'));
+        }
+
+        // Get user bookings only
+        if ($user) {
+            $query->where('user_id', $user->id);
+        }
+
+        // Order by latest first
+        $bookings = $query->latest('booking_date')
+            ->latest('created_at')
+            ->paginate(10)
+            ->withQueryString();
 
         return view('bookings.my', [
             'bookings' => $bookings,
-            'phone' => $phone,
+            'statuses' => ['pending', 'confirmed', 'cancelled'],
+            'selectedStatus' => $request->input('status'),
+            'dateFrom' => $request->input('date_from'),
+            'dateTo' => $request->input('date_to'),
         ]);
     }
 }

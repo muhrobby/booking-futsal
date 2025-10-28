@@ -14,14 +14,30 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        User::updateOrCreate(
-            ['email' => 'admin@example.com'],
-            [
-                'name' => 'Admin',
-                'phone' => '08123456789',
-                'role' => 'admin',
-                'password' => Hash::make('password'),
-            ]
-        );
+        // Create 10 admins
+        for ($i = 1; $i <= 10; $i++) {
+            User::updateOrCreate(
+                ['email' => "admin{$i}@example.com"],
+                [
+                    'name' => "Admin {$i}",
+                    'phone' => '0812345' . str_pad($i, 4, '0', STR_PAD_LEFT),
+                    'role' => 'admin',
+                    'password' => Hash::make('password'),
+                ]
+            );
+        }
+
+        // Create 50 users
+        for ($i = 1; $i <= 50; $i++) {
+            User::updateOrCreate(
+                ['email' => "user{$i}@example.com"],
+                [
+                    'name' => "User {$i}",
+                    'phone' => '0856789' . str_pad($i, 4, '0', STR_PAD_LEFT),
+                    'role' => 'user',
+                    'password' => Hash::make('password'),
+                ]
+            );
+        }
     }
 }
