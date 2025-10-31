@@ -2,9 +2,7 @@ version: '3.8'
 
 services:
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: booking-futsal_app:latest
     container_name: futsal-neo-s-app
     restart: unless-stopped
     working_dir: /var/www
@@ -66,12 +64,13 @@ services:
     mem_reservation: 128m
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.futsal-nginx.rule=Host(`futsal.yourdomain.com`)"
+      - "traefik.http.routers.futsal-nginx.rule=Host(`kelompok1-de.humahub.my.id`)"
       - "traefik.http.routers.futsal-nginx.entrypoints=websecure"
-      - "traefik.http.routers.futsal-nginx.tls=true"
-      - "traefik.http.routers.futsal-nginx.tls.certresolver=letsencrypt"
       - "traefik.http.services.futsal-nginx.loadbalancer.server.port=80"
       - "traefik.docker.network=traefik-network"
+      - traefik.http.routers.futsal-nginx.tls=true
+      - traefik.http.routers.futsal-nginx.tls.certresolver=cf
+
 
 networks:
   futsal-network:

@@ -31,8 +31,8 @@ WORKDIR /app
 # Copy package files
 COPY package.json package-lock.json ./
 
-# Install npm dependencies
-RUN npm ci --only=production
+# Install ALL dependencies (including dev) for build - CHANGED
+RUN npm ci
 
 # Copy source files needed for build
 COPY resources ./resources
