@@ -97,7 +97,11 @@ COPY --chown=www-data:www-data . /var/www
 # Copy vendor from composer stage
 COPY --from=vendor --chown=www-data:www-data /app/vendor /var/www/vendor
 
-# Copy built assets from frontend stage
+# Copy built assets from host (should be built before Docker build)
+# If not present, use frontend stage build as fallback  
+RUN if [ ! -d /var/www/public/build ] || [ ! -f /var/www/public/build/manifest.json ]; then \
+    mkdir -p /var/www/public/build; \
+    fi
 COPY --from=frontend --chown=www-data:www-data /app/public/build /var/www/public/build
 
 # Create necessary directories
