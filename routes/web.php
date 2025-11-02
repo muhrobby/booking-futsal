@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FieldController;
+use App\Http\Controllers\HealthController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ScheduleController;
 use Illuminate\Http\Request;
@@ -17,6 +18,11 @@ Route::get('/', HomeController::class)->name('home');
 Route::get('/fields', [FieldController::class, 'index'])->name('fields.index');
 Route::get('/schedule', [ScheduleController::class, 'index'])->name('schedule.index');
 Route::view('/contact', 'contact')->name('contact');
+
+// Health check endpoints (no authentication required)
+Route::get('/health', [HealthController::class, 'check'])->name('health.check');
+Route::get('/health/ready', [HealthController::class, 'ready'])->name('health.ready');
+Route::get('/health/live', [HealthController::class, 'alive'])->name('health.live');
 
 Route::get('dashboard', DashboardController::class)->middleware(['auth', 'verified'])->name('dashboard');
 Route::view('profile', 'profile')->middleware(['auth'])->name('profile');

@@ -14,18 +14,18 @@
         <x-navbar />
 
         <!-- Main Content -->
-        <main class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <main class="flex-1 w-full max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-6 sm:py-8">
             <!-- Status/Alert Messages -->
             @if (session('status'))
-                <x-alert type="success" :message="session('status')" class="mb-6" />
+                <x-alert type="success" :message="session('status')" class="mb-4 sm:mb-6" />
             @endif
 
             @if (session('error'))
-                <x-alert type="error" :message="session('error')" class="mb-6" />
+                <x-alert type="error" :message="session('error')" class="mb-4 sm:mb-6" />
             @endif
 
             @if ($errors->any())
-                <x-alert type="error" :message="'Terjadi kesalahan. Silakan periksa kembali data Anda.'" class="mb-6" />
+                <x-alert type="error" :message="'Terjadi kesalahan. Silakan periksa kembali data Anda.'" class="mb-4 sm:mb-6" />
             @endif
 
             @yield('content')
@@ -37,9 +37,9 @@
         </main>
 
         <!-- Footer -->
-        <footer class="bg-gray-900 text-white mt-16 border-t border-gray-800">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+        <footer class="bg-gray-900 text-white mt-12 sm:mt-16 border-t border-gray-800">
+            <div class="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-8 sm:py-12">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8 mb-6 sm:mb-8">
                     <div>
                         <h4 class="font-bold text-lg mb-4 text-gray-100">Tentang</h4>
                         <ul class="space-y-2 text-gray-400 text-sm">

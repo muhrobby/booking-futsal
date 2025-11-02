@@ -20,27 +20,27 @@
 
             <!-- Page Content -->
             <main class="flex-1 overflow-y-auto bg-gray-100">
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <div class="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-6 sm:py-8">
                     <!-- Breadcrumb -->
                     @if (isset($breadcrumbs))
-                        <x-admin.breadcrumb :items="$breadcrumbs" class="mb-6" />
+                        <x-admin.breadcrumb :items="$breadcrumbs" class="mb-4 sm:mb-6" />
                     @endif
 
                     <!-- Status/Alert Messages -->
                     @if (session('success'))
-                        <x-alert type="success" :message="session('success')" class="mb-6" />
+                        <x-alert type="success" :message="session('success')" class="mb-4 sm:mb-6" />
                     @endif
 
                     @if (session('status'))
-                        <x-alert type="success" :message="session('status')" class="mb-6" />
+                        <x-alert type="success" :message="session('status')" class="mb-4 sm:mb-6" />
                     @endif
 
                     @if (session('error'))
-                        <x-alert type="error" :message="session('error')" class="mb-6" />
+                        <x-alert type="error" :message="session('error')" class="mb-4 sm:mb-6" />
                     @endif
 
                     @if ($errors->any())
-                        <x-alert type="error" :message="'Terjadi kesalahan. Silakan periksa kembali data Anda.'" class="mb-6" />
+                        <x-alert type="error" :message="'Terjadi kesalahan. Silakan periksa kembali data Anda.'" class="mb-4 sm:mb-6" />
                     @endif
 
                     @yield('content')

@@ -4,40 +4,40 @@
 
 @section('content')
     <!-- Page Header with Date Range Filter -->
-    <div class="mb-8">
-        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-            <div>
-                <h1 class="text-3xl font-bold text-gray-900">Dashboard Admin</h1>
-                <p class="text-gray-600 mt-2">Kelola dan pantau semua aktivitas platform Futsal Neo S</p>
+    <div class="mb-6 sm:mb-8">
+        <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-3 sm:gap-4 lg:gap-0">
+            <div class="min-w-0">
+                <h1 class="text-2xl sm:text-3xl font-bold text-gray-900">Dashboard Admin</h1>
+                <p class="text-gray-600 text-sm sm:text-base mt-1 sm:mt-2">Kelola dan pantau semua aktivitas platform Futsal Neo S</p>
             </div>
             
             <!-- Date Range Filter -->
-            <div class="bg-white rounded-lg shadow-md border border-gray-200 p-4">
-                <form method="GET" action="{{ route('admin.dashboard') }}" class="flex flex-col sm:flex-row gap-3 items-end">
-                    <div>
+            <div class="bg-white rounded-lg shadow-md border border-gray-200 p-3 sm:p-4 w-full lg:w-auto">
+                <form method="GET" action="{{ route('admin.dashboard') }}" class="flex flex-col sm:flex-row gap-2 sm:gap-3 items-end">
+                    <div class="flex-1 sm:flex-none">
                         <label for="start_date" class="block text-xs font-medium text-gray-700 mb-1">Tanggal Mulai</label>
                         <input 
                             type="date" 
                             id="start_date" 
                             name="start_date" 
                             value="{{ $startDate }}"
-                            class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            class="w-full px-2 sm:px-3 py-2 border border-gray-300 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         >
                     </div>
-                    <div>
+                    <div class="flex-1 sm:flex-none">
                         <label for="end_date" class="block text-xs font-medium text-gray-700 mb-1">Tanggal Akhir</label>
                         <input 
                             type="date" 
                             id="end_date" 
                             name="end_date" 
                             value="{{ $endDate }}"
-                            class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            class="w-full px-2 sm:px-3 py-2 border border-gray-300 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         >
                     </div>
-                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium text-sm">
+                    <button type="submit" class="w-full sm:w-auto px-3 sm:px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition font-medium">
                         Filter
                     </button>
-                    <a href="{{ route('admin.dashboard') }}" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition font-medium text-sm">
+                    <a href="{{ route('admin.dashboard') }}" class="w-full sm:w-auto px-3 sm:px-4 py-2 bg-gray-200 text-gray-700 text-sm rounded-lg hover:bg-gray-300 transition font-medium text-center">
                         Reset
                     </a>
                 </form>
@@ -46,7 +46,7 @@
     </div>
 
     <!-- Key Metrics -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 mb-6 sm:mb-8">
         <!-- Total Users -->
         <x-stats-card 
             title="Total Pengguna" 
@@ -81,16 +81,16 @@
     </div>
 
     <!-- Quick Stats -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
         <!-- Pending Confirmations -->
         <x-card class="bg-blue-50 border-blue-200">
-            <div class="flex items-center justify-between">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <div>
-                    <p class="text-sm font-medium text-gray-600">Menunggu Konfirmasi</p>
-                    <p class="text-3xl font-bold text-blue-600 mt-2">{{ $pendingBookings }}</p>
+                    <p class="text-xs sm:text-sm font-medium text-gray-600">Menunggu Konfirmasi</p>
+                    <p class="text-2xl sm:text-3xl font-bold text-blue-600 mt-1 sm:mt-2">{{ $pendingBookings }}</p>
                     <p class="text-xs text-gray-500 mt-1">Booking yang perlu dikonfirmasi</p>
                 </div>
-                <svg class="w-12 h-12 text-blue-200" fill="currentColor" viewBox="0 0 20 20">
+                <svg class="w-10 h-10 sm:w-12 sm:h-12 text-blue-200 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M5 2a1 1 0 011 1v1h1V3a1 1 0 011-1h5a1 1 0 011 1v1h1V3a1 1 0 011 1v1h1a2 2 0 012 2v2h1a1 1 0 110 2h-1v2h1a1 1 0 110 2h-1v2h1a1 1 0 110 2h-1v1a2 2 0 01-2 2h-1v1a1 1 0 11-2 0v-1h-1v1a1 1 0 11-2 0v-1h-1v1a1 1 0 11-2 0v-1H7a2 2 0 01-2-2v-1H4a1 1 0 110-2h1v-2H4a1 1 0 110-2h1V9H4a1 1 0 110-2h1V7a2 2 0 012-2h1V4a1 1 0 01-1-1z" clip-rule="evenodd" />
                 </svg>
             </div>
@@ -98,13 +98,13 @@
 
         <!-- Today's Bookings -->
         <x-card class="bg-emerald-50 border-emerald-200">
-            <div class="flex items-center justify-between">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <div>
-                    <p class="text-sm font-medium text-gray-600">Booking Hari Ini</p>
-                    <p class="text-3xl font-bold text-emerald-600 mt-2">{{ $todayBookings }}</p>
+                    <p class="text-xs sm:text-sm font-medium text-gray-600">Booking Hari Ini</p>
+                    <p class="text-2xl sm:text-3xl font-bold text-emerald-600 mt-1 sm:mt-2">{{ $todayBookings }}</p>
                     <p class="text-xs text-gray-500 mt-1">Booking yang terjadi hari ini</p>
                 </div>
-                <svg class="w-12 h-12 text-emerald-200" fill="currentColor" viewBox="0 0 20 20">
+                <svg class="w-10 h-10 sm:w-12 sm:h-12 text-emerald-200 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v2h16V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5H4v6a2 2 0 002 2h12a2 2 0 002-2V7h-2v1a1 1 0 11-2 0V7H9v1a1 1 0 11-2 0V7H6v1a1 1 0 11-2 0V7z" clip-rule="evenodd" />
                 </svg>
             </div>
@@ -112,13 +112,13 @@
 
         <!-- Occupancy Rate -->
         <x-card class="bg-orange-50 border-orange-200">
-            <div class="flex items-center justify-between">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <div>
-                    <p class="text-sm font-medium text-gray-600">Tingkat Okupansi</p>
-                    <p class="text-3xl font-bold text-orange-600 mt-2">{{ $occupancyRate }}%</p>
+                    <p class="text-xs sm:text-sm font-medium text-gray-600">Tingkat Okupansi</p>
+                    <p class="text-2xl sm:text-3xl font-bold text-orange-600 mt-1 sm:mt-2">{{ $occupancyRate }}%</p>
                     <p class="text-xs text-gray-500 mt-1">Slot waktu yang terpesan</p>
                 </div>
-                <svg class="w-12 h-12 text-orange-200" fill="currentColor" viewBox="0 0 20 20">
+                <svg class="w-10 h-10 sm:w-12 sm:h-12 text-orange-200 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z" />
                 </svg>
             </div>
@@ -126,48 +126,48 @@
     </div>
 
     <!-- Charts Section -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 mb-6 sm:mb-8">
         <!-- Revenue Trend Chart -->
         <x-card>
-            <div class="pb-4 border-b border-gray-200 mb-6">
-                <h3 class="text-lg font-bold text-gray-900">Trend Pendapatan</h3>
-                <p class="text-sm text-gray-500 mt-1">Grafik pendapatan berdasarkan rentang tanggal</p>
+            <div class="pb-3 sm:pb-4 border-b border-gray-200 mb-4 sm:mb-6">
+                <h3 class="text-base sm:text-lg font-bold text-gray-900">Trend Pendapatan</h3>
+                <p class="text-xs sm:text-sm text-gray-500 mt-1">Grafik pendapatan berdasarkan rentang tanggal</p>
             </div>
-            <div class="h-80">
+            <div class="h-64 sm:h-80">
                 <canvas id="revenueChart"></canvas>
             </div>
         </x-card>
 
         <!-- Booking Trend Chart -->
         <x-card>
-            <div class="pb-4 border-b border-gray-200 mb-6">
-                <h3 class="text-lg font-bold text-gray-900">Trend Booking</h3>
-                <p class="text-sm text-gray-500 mt-1">Jumlah booking berdasarkan rentang tanggal</p>
+            <div class="pb-3 sm:pb-4 border-b border-gray-200 mb-4 sm:mb-6">
+                <h3 class="text-base sm:text-lg font-bold text-gray-900">Trend Booking</h3>
+                <p class="text-xs sm:text-sm text-gray-500 mt-1">Jumlah booking berdasarkan rentang tanggal</p>
             </div>
-            <div class="h-80">
+            <div class="h-64 sm:h-80">
                 <canvas id="bookingChart"></canvas>
             </div>
         </x-card>
     </div>
 
     <!-- Recent Bookings & Top Fields -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 mb-6 sm:mb-8">
         <!-- Recent Bookings -->
         <div class="lg:col-span-2">
             <x-card>
-                <div class="pb-4 border-b border-gray-200 mb-4">
-                    <h3 class="text-lg font-bold text-gray-900">Booking Terbaru</h3>
+                <div class="pb-3 sm:pb-4 border-b border-gray-200 mb-3 sm:mb-4">
+                    <h3 class="text-base sm:text-lg font-bold text-gray-900">Booking Terbaru</h3>
                 </div>
 
-                <div class="space-y-4">
+                <div class="space-y-2 sm:space-y-4">
                     @forelse($recentBookings as $booking)
-                        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition">
-                            <div class="flex-1">
-                                <p class="font-medium text-gray-900">{{ $booking->field?->name }}</p>
-                                <p class="text-sm text-gray-500 mt-1">{{ $booking->user?->name }} • {{ $booking->booking_date->locale('id')->format('d M Y') }}</p>
+                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between p-2 sm:p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition gap-2">
+                            <div class="flex-1 min-w-0">
+                                <p class="font-medium text-sm sm:text-base text-gray-900 truncate">{{ $booking->field?->name }}</p>
+                                <p class="text-xs sm:text-sm text-gray-500 mt-0.5 truncate">{{ $booking->user?->name }} • {{ $booking->booking_date->locale('id')->format('d M Y') }}</p>
                                 <p class="text-xs text-gray-500">{{ $booking->timeSlot?->start_time->format('H:i') }} - {{ $booking->timeSlot?->end_time->format('H:i') }}</p>
                             </div>
-                            <span class="inline-block px-3 py-1 rounded-full text-xs font-semibold
+                            <span class="inline-block px-2 sm:px-3 py-1 rounded-full text-xs font-semibold flex-shrink-0
                                 @if($booking->status === 'confirmed') bg-green-100 text-green-700
                                 @elseif($booking->status === 'pending') bg-yellow-100 text-yellow-700
                                 @else bg-gray-100 text-gray-700
@@ -177,12 +177,12 @@
                             </span>
                         </div>
                     @empty
-                        <p class="text-gray-500 text-center py-8">Belum ada booking terbaru</p>
+                        <p class="text-gray-500 text-center py-6 sm:py-8 text-sm">Belum ada booking terbaru</p>
                     @endforelse
                 </div>
 
-                <div class="pt-4 border-t border-gray-200 mt-4">
-                    <a href="{{ route('admin.bookings.index') }}" class="text-sm font-medium text-blue-600 hover:text-blue-700 transition">
+                <div class="pt-3 sm:pt-4 border-t border-gray-200 mt-3 sm:mt-4">
+                    <a href="{{ route('admin.bookings.index') }}" class="text-xs sm:text-sm font-medium text-blue-600 hover:text-blue-700 transition">
                         Lihat Semua Booking →
                     </a>
                 </div>
@@ -192,28 +192,28 @@
         <!-- Top Fields -->
         <div>
             <x-card>
-                <div class="pb-4 border-b border-gray-200 mb-4">
-                    <h3 class="text-lg font-bold text-gray-900">Lapangan Teratas</h3>
+                <div class="pb-3 sm:pb-4 border-b border-gray-200 mb-3 sm:mb-4">
+                    <h3 class="text-base sm:text-lg font-bold text-gray-900">Lapangan Teratas</h3>
                 </div>
 
-                <div class="space-y-3">
+                <div class="space-y-2 sm:space-y-3">
                     @forelse($topFields as $field)
-                        <div class="p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition">
-                            <p class="font-medium text-sm text-gray-900">{{ $field->name }}</p>
-                            <div class="flex items-center justify-between mt-2">
+                        <div class="p-2 sm:p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition">
+                            <p class="font-medium text-xs sm:text-sm text-gray-900 truncate">{{ $field->name }}</p>
+                            <div class="flex items-center justify-between mt-1 sm:mt-2 gap-1">
                                 <p class="text-xs text-gray-500">{{ $field->bookings_count }} booking</p>
-                                <div class="w-16 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                                <div class="w-12 sm:w-16 h-1.5 bg-gray-200 rounded-full overflow-hidden flex-shrink-0">
                                     <div class="h-full bg-blue-600" style="width: {{ $topFields->first()->bookings_count > 0 ? ($field->bookings_count / $topFields->first()->bookings_count) * 100 : 0 }}%"></div>
                                 </div>
                             </div>
                         </div>
                     @empty
-                        <p class="text-gray-500 text-center py-8 text-sm">Belum ada data lapangan</p>
+                        <p class="text-gray-500 text-center py-6 sm:py-8 text-sm">Belum ada data lapangan</p>
                     @endforelse
                 </div>
 
-                <div class="pt-4 border-t border-gray-200 mt-4">
-                    <a href="{{ route('admin.fields.index') }}" class="text-sm font-medium text-blue-600 hover:text-blue-700 transition">
+                <div class="pt-3 sm:pt-4 border-t border-gray-200 mt-3 sm:mt-4">
+                    <a href="{{ route('admin.fields.index') }}" class="text-xs sm:text-sm font-medium text-blue-600 hover:text-blue-700 transition">
                         Kelola Lapangan →
                     </a>
                 </div>
@@ -222,14 +222,14 @@
     </div>
 
     <!-- Booking Status Distribution -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
         <!-- Booking Status Breakdown -->
         <x-card>
-            <div class="pb-4 border-b border-gray-200 mb-6">
-                <h3 class="text-lg font-bold text-gray-900">Status Booking</h3>
+            <div class="pb-3 sm:pb-4 border-b border-gray-200 mb-4 sm:mb-6">
+                <h3 class="text-base sm:text-lg font-bold text-gray-900">Status Booking</h3>
             </div>
 
-            <div class="space-y-4">
+            <div class="space-y-3 sm:space-y-4">
                 @php
                     $statuses = ['confirmed' => 'Confirmed', 'pending' => 'Pending', 'cancelled' => 'Cancelled'];
                     $statusColors = ['confirmed' => 'emerald', 'pending' => 'yellow', 'cancelled' => 'red'];
@@ -242,14 +242,14 @@
                         $percentage = $totalStatus > 0 ? ($count / $totalStatus) * 100 : 0;
                     @endphp
                     <div>
-                        <div class="flex items-center justify-between mb-2">
-                            <p class="text-sm font-medium text-gray-900">{{ $label }}</p>
-                            <span class="text-sm font-bold text-gray-900">{{ $count }}</span>
+                        <div class="flex items-center justify-between mb-1 sm:mb-2">
+                            <p class="text-xs sm:text-sm font-medium text-gray-900">{{ $label }}</p>
+                            <span class="text-xs sm:text-sm font-bold text-gray-900">{{ $count }}</span>
                         </div>
                         <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
                             <div class="h-full bg-{{ $statusColors[$key] }}-500" style="width: {{ $percentage }}%"></div>
                         </div>
-                        <p class="text-xs text-gray-500 mt-1">{{ number_format($percentage, 1) }}%</p>
+                        <p class="text-xs text-gray-500 mt-0.5 sm:mt-1">{{ number_format($percentage, 1) }}%</p>
                     </div>
                 @endforeach
             </div>
@@ -257,24 +257,24 @@
 
         <!-- Quick Actions -->
         <x-card>
-            <div class="pb-4 border-b border-gray-200 mb-6">
-                <h3 class="text-lg font-bold text-gray-900">Aksi Cepat</h3>
+            <div class="pb-3 sm:pb-4 border-b border-gray-200 mb-4 sm:mb-6">
+                <h3 class="text-base sm:text-lg font-bold text-gray-900">Aksi Cepat</h3>
             </div>
 
-            <div class="space-y-3">
-                <a href="{{ route('admin.bookings.index') }}" class="block p-4 bg-blue-50 rounded-lg hover:bg-blue-100 transition">
-                    <p class="font-medium text-gray-900">Kelola Booking</p>
-                    <p class="text-xs text-gray-500 mt-1">Lihat semua booking dan ubah status</p>
+            <div class="space-y-2 sm:space-y-3">
+                <a href="{{ route('admin.bookings.index') }}" class="block p-2 sm:p-4 bg-blue-50 rounded-lg hover:bg-blue-100 transition">
+                    <p class="font-medium text-sm sm:text-base text-gray-900">Kelola Booking</p>
+                    <p class="text-xs text-gray-500 mt-0.5 sm:mt-1">Lihat semua booking dan ubah status</p>
                 </a>
 
-                <a href="{{ route('admin.fields.index') }}" class="block p-4 bg-emerald-50 rounded-lg hover:bg-emerald-100 transition">
-                    <p class="font-medium text-gray-900">Kelola Lapangan</p>
-                    <p class="text-xs text-gray-500 mt-1">Tambah, ubah, atau hapus lapangan</p>
+                <a href="{{ route('admin.fields.index') }}" class="block p-2 sm:p-4 bg-emerald-50 rounded-lg hover:bg-emerald-100 transition">
+                    <p class="font-medium text-sm sm:text-base text-gray-900">Kelola Lapangan</p>
+                    <p class="text-xs text-gray-500 mt-0.5 sm:mt-1">Tambah, ubah, atau hapus lapangan</p>
                 </a>
 
-                <a href="{{ route('admin.fields.create') }}" class="block p-4 bg-orange-50 rounded-lg hover:bg-orange-100 transition">
-                    <p class="font-medium text-gray-900">Tambah Lapangan Baru</p>
-                    <p class="text-xs text-gray-500 mt-1">Tambahkan lapangan futsal baru</p>
+                <a href="{{ route('admin.fields.create') }}" class="block p-2 sm:p-4 bg-orange-50 rounded-lg hover:bg-orange-100 transition">
+                    <p class="font-medium text-sm sm:text-base text-gray-900">Tambah Lapangan Baru</p>
+                    <p class="text-xs text-gray-500 mt-0.5 sm:mt-1">Tambahkan lapangan futsal baru</p>
                 </a>
             </div>
         </x-card>

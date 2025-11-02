@@ -18,4 +18,43 @@
         background-size: cover;
         background-repeat: no-repeat;
     }
+
+    /* Responsive Text Sizing */
+    .text-responsive {
+        @apply text-lg sm:text-xl lg:text-2xl;
+    }
+
+    .text-responsive-lg {
+        @apply text-2xl sm:text-3xl lg:text-4xl;
+    }
+
+    .text-responsive-xl {
+        @apply text-3xl sm:text-4xl lg:text-5xl;
+    }
+
+    /* Responsive Padding */
+    .p-responsive {
+        @apply p-3 sm:p-4 lg:p-6;
+    }
+
+    .px-responsive {
+        @apply px-3 sm:px-4 lg:px-6;
+    }
+
+    .py-responsive {
+        @apply py-3 sm:py-4 lg:py-6;
+    }
+
+    /* Responsive Margins */
+    .mb-responsive {
+        @apply mb-6 sm:mb-8 lg:mb-12;
+    }
+
+    .mt-responsive {
+        @apply mt-6 sm:mt-8 lg:mt-12;
+    }
+
+    .gap-responsive {
+        @apply gap-3 sm:gap-4 lg:gap-6;
+    }
 }
