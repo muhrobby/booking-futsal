@@ -32,15 +32,15 @@ new #[Layout('layouts.guest')] class extends Component
         <!-- Email Address -->
         <div>
             <x-input-label for="email" :value="__('Email Address')" class="text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2 block" />
-            <x-text-input 
-                wire:model="form.email" 
-                id="email" 
-                class="block w-full px-3 sm:px-4 py-2 border border-gray-300 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
-                type="email" 
-                name="email" 
-                required 
-                autofocus 
-                autocomplete="username" 
+            <x-text-input
+                wire:model="form.email"
+                id="email"
+                class="block w-full px-3 sm:px-4 py-2 border border-gray-300 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                type="email"
+                name="email"
+                required
+                autofocus
+                autocomplete="username"
             />
             <x-input-error :messages="$errors->get('form.email')" class="mt-1 text-xs" />
         </div>
@@ -48,25 +48,25 @@ new #[Layout('layouts.guest')] class extends Component
         <!-- Password -->
         <div>
             <x-input-label for="password" :value="__('Password')" class="text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2 block" />
-            <x-text-input 
-                wire:model="form.password" 
-                id="password" 
+            <x-text-input
+                wire:model="form.password"
+                id="password"
                 class="block w-full px-3 sm:px-4 py-2 border border-gray-300 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 type="password"
                 name="password"
-                required 
-                autocomplete="current-password" 
+                required
+                autocomplete="current-password"
             />
             <x-input-error :messages="$errors->get('form.password')" class="mt-1 text-xs" />
         </div>
 
         <!-- Remember Me -->
         <div class="flex items-center">
-            <input 
-                wire:model="form.remember" 
-                id="remember" 
-                type="checkbox" 
-                class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer" 
+            <input
+                wire:model="form.remember"
+                id="remember"
+                type="checkbox"
+                class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                 name="remember"
             >
             <label for="remember" class="ms-2 text-xs sm:text-sm text-gray-600 cursor-pointer">
@@ -98,13 +98,13 @@ new #[Layout('layouts.guest')] class extends Component
         </div>
     </div>
 
-    <!-- Register Link -->
-    <div class="text-center">
-        <p class="text-xs sm:text-sm text-gray-600">
-            Belum punya akun?
-            <a href="{{ route('register') }}" class="font-semibold text-blue-600 hover:text-blue-700 transition" wire:navigate>
-                Buat akun baru
-            </a>
-        </p>
-    </div>
+{{--    <!-- Register Link -->--}}
+{{--    <div class="text-center">--}}
+{{--        <p class="text-xs sm:text-sm text-gray-600">--}}
+{{--            Belum punya akun?--}}
+{{--            <a href="{{ route('register') }}" class="font-semibold text-blue-600 hover:text-blue-700 transition" wire:navigate>--}}
+{{--                Buat akun baru--}}
+{{--            </a>--}}
+{{--        </p>--}}
+{{--    </div>--}}
 </div>
