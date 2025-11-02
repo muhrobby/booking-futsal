@@ -130,16 +130,21 @@ jobs:
           # Pull latest code
           ssh -p $VPS_PORT $VPS_USER@$VPS_HOST "cd $VPS_PATH && git fetch origin main && git pull origin main"
 
-          # Build frontend assets
+          # Build frontend assets locally on VPS
           echo "🏗️ Building frontend assets..."
-          ssh -p $VPS_PORT $VPS_USER@$VPS_HOST "cd $VPS_PATH && npm run build"
+          ssh -p $VPS_PORT $VPS_USER@$VPS_HOST "cd $VPS_PATH && npm run build && ls -lah public/build/manifest.json"
 
-          # Build and deploy
+          # Build and deploy containers
+          echo "📦 Building and starting containers..."
           ssh -p $VPS_PORT $VPS_USER@$VPS_HOST "cd $VPS_PATH && podman-compose down && podman-compose up -d --build"
 
           # Wait for containers to be ready
           echo "⏳ Waiting for containers to be ready..."
           sleep 10
+
+          # Verify assets in container
+          echo "✅ Verifying assets in container..."
+          ssh -p $VPS_PORT $VPS_USER@$VPS_HOST "cd $VPS_PATH && podman cp public/build \$(podman ps --filter 'label=com.docker.compose.service=app' -q):/var/www/public/ || true"
 
           # Generate app key if not exists
           ssh -p $VPS_PORT $VPS_USER@$VPS_HOST "cd $VPS_PATH && podman exec \$(podman ps --filter 'label=com.docker.compose.service=app' -q) php artisan key:generate 2>/dev/null || true"
@@ -152,8 +157,9 @@ jobs:
           echo "🌱 Running database seeders..."
           ssh -p $VPS_PORT $VPS_USER@$VPS_HOST "cd $VPS_PATH && podman exec \$(podman ps --filter 'label=com.docker.compose.service=app' -q) php artisan db:seed 2>/dev/null || true"
 
-          # Clear caches
+          # Clear caches properly
           echo "🧹 Clearing caches..."
+          ssh -p $VPS_PORT $VPS_USER@$VPS_HOST "cd $VPS_PATH && podman exec \$(podman ps --filter 'label=com.docker.compose.service=app' -q) php artisan view:clear 2>/dev/null || true"
           ssh -p $VPS_PORT $VPS_USER@$VPS_HOST "cd $VPS_PATH && podman exec \$(podman ps --filter 'label=com.docker.compose.service=app' -q) php artisan optimize:clear 2>/dev/null || true"
 
       - name: Deployment Status
