@@ -133,6 +133,25 @@ jobs:
           # Build and deploy
           ssh -p $VPS_PORT $VPS_USER@$VPS_HOST "cd $VPS_PATH && podman-compose down && podman-compose up -d --build"
 
+          # Wait for containers to be ready
+          echo "⏳ Waiting for containers to be ready..."
+          sleep 10
+
+          # Generate app key if not exists
+          ssh -p $VPS_PORT $VPS_USER@$VPS_HOST "cd $VPS_PATH && podman exec \$(podman ps --filter 'label=com.docker.compose.service=app' -q) php artisan key:generate 2>/dev/null || true"
+
+          # Run database migrations
+          echo "🔄 Running database migrations..."
+          ssh -p $VPS_PORT $VPS_USER@$VPS_HOST "cd $VPS_PATH && podman exec \$(podman ps --filter 'label=com.docker.compose.service=app' -q) php artisan migrate --force 2>/dev/null || true"
+
+          # Run database seeders
+          echo "🌱 Running database seeders..."
+          ssh -p $VPS_PORT $VPS_USER@$VPS_HOST "cd $VPS_PATH && podman exec \$(podman ps --filter 'label=com.docker.compose.service=app' -q) php artisan db:seed 2>/dev/null || true"
+
+          # Clear caches
+          echo "🧹 Clearing caches..."
+          ssh -p $VPS_PORT $VPS_USER@$VPS_HOST "cd $VPS_PATH && podman exec \$(podman ps --filter 'label=com.docker.compose.service=app' -q) php artisan optimize:clear 2>/dev/null || true"
+
       - name: Deployment Status
         run: |
           echo "✅ Deployment completed successfully!"
