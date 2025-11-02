@@ -32,12 +32,12 @@
             </div>
 
             <!-- Footer -->
-            <div class="text-center mt-4 sm:mt-6">
-                <p class="text-xs sm:text-sm text-gray-600">
-                    Belum punya akun? 
-                    <a href="{{ route('register') }}" class="text-blue-600 hover:text-blue-700 font-semibold transition">Daftar di sini</a>
-                </p>
-            </div>
+{{--            <div class="text-center mt-4 sm:mt-6">--}}
+{{--                <p class="text-xs sm:text-sm text-gray-600">--}}
+{{--                    Belum punya akun? --}}
+{{--                    <a href="{{ route('register') }}" class="text-blue-600 hover:text-blue-700 font-semibold transition">Daftar di sini</a>--}}
+{{--                </p>--}}
+{{--            </div>--}}
         </div>
     </div>
 </body>
