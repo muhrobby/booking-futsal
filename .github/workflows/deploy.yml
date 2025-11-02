@@ -120,14 +120,18 @@ jobs:
           VPS_HOST: ${{ secrets.VPS_HOST }}
           VPS_USER: ${{ secrets.VPS_USER }}
           VPS_PORT: ${{ secrets.VPS_PORT }}
+          VPS_PATH: ${{ secrets.VPS_PATH }}
         run: |
           mkdir -p ~/.ssh
           echo "$DEPLOY_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -p $VPS_PORT $VPS_HOST >> ~/.ssh/known_hosts
 
-          # Execute deployment script on VPS
-          ssh -p $VPS_PORT $VPS_USER@$VPS_HOST 'bash /home/$USER/deploy.sh'
+          # Pull latest code
+          ssh -p $VPS_PORT $VPS_USER@$VPS_HOST "cd $VPS_PATH && git fetch origin main && git pull origin main"
+
+          # Build and deploy
+          ssh -p $VPS_PORT $VPS_USER@$VPS_HOST "cd $VPS_PATH && podman-compose down && podman-compose up -d --build"
 
       - name: Deployment Status
         run: |
