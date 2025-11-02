@@ -103,7 +103,7 @@ new #[Layout('layouts.guest')] class extends Component
         <p class="text-xs sm:text-sm text-gray-600">
             Belum punya akun?
             <a href="{{ route('register') }}" class="font-semibold text-blue-600 hover:text-blue-700 transition" wire:navigate>
-                Buat akun di sini
+                Buat Akun Baru di Sini
             </a>
         </p>
     </div>
