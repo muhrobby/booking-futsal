@@ -144,7 +144,7 @@ jobs:
 
           # Verify assets in container
           echo "✅ Verifying assets in container..."
-          ssh -p $VPS_PORT $VPS_USER@$VPS_HOST "cd $VPS_PATH && podman cp public/build \$(podman ps --filter 'label=com.docker.compose.service=app' -q):/var/www/public/ || true"
+          ssh -p $VPS_PORT $VPS_USER@$VPS_HOST "cd $VPS_PATH && CONTAINER_ID=\$(podman ps --filter 'label=com.docker.compose.service=app' -q) && podman cp public/build/. \$CONTAINER_ID:/var/www/html/public/build/ 2>/dev/null || true"
 
           # Generate app key if not exists
           ssh -p $VPS_PORT $VPS_USER@$VPS_HOST "cd $VPS_PATH && podman exec \$(podman ps --filter 'label=com.docker.compose.service=app' -q) php artisan key:generate 2>/dev/null || true"
@@ -159,8 +159,10 @@ jobs:
 
           # Clear caches properly
           echo "🧹 Clearing caches..."
-          ssh -p $VPS_PORT $VPS_USER@$VPS_HOST "cd $VPS_PATH && podman exec \$(podman ps --filter 'label=com.docker.compose.service=app' -q) php artisan view:clear 2>/dev/null || true"
-          ssh -p $VPS_PORT $VPS_USER@$VPS_HOST "cd $VPS_PATH && podman exec \$(podman ps --filter 'label=com.docker.compose.service=app' -q) php artisan optimize:clear 2>/dev/null || true"
+          ssh -p $VPS_PORT $VPS_USER@$VPS_HOST "cd $VPS_PATH && CONTAINER_ID=\$(podman ps --filter 'label=com.docker.compose.service=app' -q) && podman exec \$CONTAINER_ID php artisan config:clear 2>/dev/null || true"
+          ssh -p $VPS_PORT $VPS_USER@$VPS_HOST "cd $VPS_PATH && CONTAINER_ID=\$(podman ps --filter 'label=com.docker.compose.service=app' -q) && podman exec \$CONTAINER_ID php artisan cache:clear 2>/dev/null || true"
+          ssh -p $VPS_PORT $VPS_USER@$VPS_HOST "cd $VPS_PATH && CONTAINER_ID=\$(podman ps --filter 'label=com.docker.compose.service=app' -q) && podman exec \$CONTAINER_ID php artisan view:clear 2>/dev/null || true"
+          ssh -p $VPS_PORT $VPS_USER@$VPS_HOST "cd $VPS_PATH && CONTAINER_ID=\$(podman ps --filter 'label=com.docker.compose.service=app' -q) && podman exec \$CONTAINER_ID php artisan optimize:clear 2>/dev/null || true"
 
       - name: Deployment Status
         run: |
