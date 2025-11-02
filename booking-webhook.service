@@ -1,0 +1,17 @@
+[Unit]
+Description=Booking Futsal GitHub Webhook Server
+After=network.target
+StartLimitIntervalSec=60
+StartLimitBurst=3
+
+[Service]
+Type=simple
+User=robby
+WorkingDirectory=/home/robby/stacks/prod/booking-futsal
+Environment="PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin"
+ExecStart=/usr/bin/python3 /home/robby/stacks/prod/booking-futsal/webhook_server.py
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
