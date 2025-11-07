@@ -25,7 +25,7 @@ class BookingSeeder extends Seeder
             return;
         }
 
-        $statuses = ['pending', 'confirmed', 'completed', 'cancelled'];
+        $statuses = ['pending', 'confirmed', 'canceled'];
         $bookingCount = 0;
 
         // Generate bookings for next 30 days with varied daily amounts
@@ -41,8 +41,15 @@ class BookingSeeder extends Seeder
                 $field = $fields->random();
                 $timeSlot = $timeSlots->random();
 
-                // Random status with more confirmed bookings (70% confirmed)
-                $status = rand(1, 100) <= 70 ? 'confirmed' : $statuses[rand(0, 3)];
+                // Random status with more confirmed bookings (70% confirmed, 20% pending, 10% canceled)
+                $rand = rand(1, 100);
+                if ($rand <= 70) {
+                    $status = 'confirmed';
+                } elseif ($rand <= 90) {
+                    $status = 'pending';
+                } else {
+                    $status = 'canceled';
+                }
 
                 try {
                     Booking::create([

@@ -30,12 +30,17 @@ class DashboardController extends Controller
         $totalUsers = User::whereBetween('created_at', [$start, $end])->count();
         $totalFields = Field::count();
         $totalBookings = Booking::whereBetween('booking_date', [$start, $end])->count();
-        $totalRevenue = Booking::where('status', 'confirmed')
+        // Calculate total revenue (database-agnostic using PHP)
+        $totalRevenue = 0;
+        foreach (Booking::where('status', 'confirmed')
             ->whereBetween('booking_date', [$start, $end])
-            ->join('fields', 'bookings.field_id', '=', 'fields.id')
-            ->join('time_slots', 'bookings.time_slot_id', '=', 'time_slots.id')
-            ->selectRaw('SUM(CAST((EXTRACT(EPOCH FROM time_slots.end_time) - EXTRACT(EPOCH FROM time_slots.start_time)) / 3600 AS INTEGER) * fields.price_per_hour) as total')
-            ->value('total') ?? 0;
+            ->with(['field', 'timeSlot'])
+            ->get() as $booking) {
+            if ($booking->timeSlot && $booking->field) {
+                $hours = $booking->timeSlot->start_time->diffInHours($booking->timeSlot->end_time);
+                $totalRevenue += $hours * $booking->field->price_per_hour;
+            }
+        }
 
         // Get recent bookings
         $recentBookings = Booking::with(['user', 'field', 'timeSlot'])
@@ -109,13 +114,17 @@ class DashboardController extends Controller
             $dateStr = $current->format('Y-m-d');
             $dates[] = $current->format('d M');
 
-            // Get revenue for this day
-            $dailyRevenue = Booking::where('status', 'confirmed')
+            // Get revenue for this day (database-agnostic using PHP)
+            $dailyRevenue = 0;
+            foreach (Booking::where('status', 'confirmed')
                 ->whereDate('booking_date', $dateStr)
-                ->join('fields', 'bookings.field_id', '=', 'fields.id')
-                ->join('time_slots', 'bookings.time_slot_id', '=', 'time_slots.id')
-                ->selectRaw('SUM(CAST((EXTRACT(EPOCH FROM time_slots.end_time) - EXTRACT(EPOCH FROM time_slots.start_time)) / 3600 AS INTEGER) * fields.price_per_hour) as total')
-                ->value('total') ?? 0;
+                ->with(['field', 'timeSlot'])
+                ->get() as $booking) {
+                if ($booking->timeSlot && $booking->field) {
+                    $hours = $booking->timeSlot->start_time->diffInHours($booking->timeSlot->end_time);
+                    $dailyRevenue += $hours * $booking->field->price_per_hour;
+                }
+            }
             
             $revenues[] = $dailyRevenue;
 

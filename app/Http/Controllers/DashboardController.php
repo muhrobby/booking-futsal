@@ -49,13 +49,14 @@ class DashboardController extends Controller
             ->orderBy('created_at', 'asc')
             ->first();
         
-        // Get total spending (PostgreSQL compatible)
-        $totalSpending = $user->bookings()
-            ->join('fields', 'bookings.field_id', '=', 'fields.id')
-            ->join('time_slots', 'bookings.time_slot_id', '=', 'time_slots.id')
-            ->selectRaw('SUM(EXTRACT(EPOCH FROM (time_slots.end_time - time_slots.start_time)) / 3600 * fields.price_per_hour) as total')
-            ->where('bookings.status', '!=', 'cancelled')
-            ->value('total') ?? 0;
+        // Get total spending (database-agnostic using raw calculations)
+        $totalSpending = 0;
+        foreach ($user->bookings()->with(['field', 'timeSlot'])->where('status', '!=', 'cancelled')->get() as $booking) {
+            if ($booking->timeSlot) {
+                $hours = $booking->timeSlot->start_time->diffInHours($booking->timeSlot->end_time);
+                $totalSpending += $hours * $booking->field->price_per_hour;
+            }
+        }
 
         return view('dashboard', [
             'user' => $user,
