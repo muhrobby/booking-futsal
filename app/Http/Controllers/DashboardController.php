@@ -49,11 +49,11 @@ class DashboardController extends Controller
             ->orderBy('created_at', 'asc')
             ->first();
         
-        // Get total spending (SQLite compatible)
+        // Get total spending (PostgreSQL compatible)
         $totalSpending = $user->bookings()
             ->join('fields', 'bookings.field_id', '=', 'fields.id')
             ->join('time_slots', 'bookings.time_slot_id', '=', 'time_slots.id')
-            ->selectRaw('SUM(CAST((JULIANDAY(time_slots.end_time) - JULIANDAY(time_slots.start_time)) * 24 AS INTEGER) * fields.price_per_hour) as total')
+            ->selectRaw('SUM(EXTRACT(EPOCH FROM (time_slots.end_time - time_slots.start_time)) / 3600 * fields.price_per_hour) as total')
             ->where('bookings.status', '!=', 'cancelled')
             ->value('total') ?? 0;
 
