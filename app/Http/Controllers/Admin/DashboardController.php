@@ -34,7 +34,7 @@ class DashboardController extends Controller
             ->whereBetween('booking_date', [$start, $end])
             ->join('fields', 'bookings.field_id', '=', 'fields.id')
             ->join('time_slots', 'bookings.time_slot_id', '=', 'time_slots.id')
-            ->selectRaw('SUM(CAST((JULIANDAY(time_slots.end_time) - JULIANDAY(time_slots.start_time)) * 24 AS INTEGER) * fields.price_per_hour) as total')
+            ->selectRaw('SUM(CAST((EXTRACT(EPOCH FROM time_slots.end_time) - EXTRACT(EPOCH FROM time_slots.start_time)) / 3600 AS INTEGER) * fields.price_per_hour) as total')
             ->value('total') ?? 0;
 
         // Get recent bookings
@@ -114,7 +114,7 @@ class DashboardController extends Controller
                 ->whereDate('booking_date', $dateStr)
                 ->join('fields', 'bookings.field_id', '=', 'fields.id')
                 ->join('time_slots', 'bookings.time_slot_id', '=', 'time_slots.id')
-                ->selectRaw('SUM(CAST((JULIANDAY(time_slots.end_time) - JULIANDAY(time_slots.start_time)) * 24 AS INTEGER) * fields.price_per_hour) as total')
+                ->selectRaw('SUM(CAST((EXTRACT(EPOCH FROM time_slots.end_time) - EXTRACT(EPOCH FROM time_slots.start_time)) / 3600 AS INTEGER) * fields.price_per_hour) as total')
                 ->value('total') ?? 0;
             
             $revenues[] = $dailyRevenue;
