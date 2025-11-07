@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use Faker\Factory as Faker;
 use Illuminate\Database\Seeder;
 
 class AdminSeeder extends Seeder
@@ -29,7 +30,7 @@ class AdminSeeder extends Seeder
             User::create([
                 'name' => $admin['name'],
                 'email' => $admin['email'],
-                'phone' => fake()->phoneNumber(),
+                'phone' => '62812345678',
                 'password' => bcrypt('password123'),
                 'role' => 'admin',
                 'email_verified_at' => now(),

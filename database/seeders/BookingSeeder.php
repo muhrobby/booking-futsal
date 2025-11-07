@@ -53,7 +53,7 @@ class BookingSeeder extends Seeder
                         'customer_name' => $member->name,
                         'customer_phone' => $member->phone,
                         'status' => $status,
-                        'notes' => fake()->sentence(),
+                        'notes' => 'Booking note for field ' . $field->name,
                         'created_at' => $bookingDate->subDays(rand(1, 7)),
                         'updated_at' => now(),
                     ]);

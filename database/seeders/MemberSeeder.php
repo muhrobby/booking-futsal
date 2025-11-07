@@ -17,9 +17,9 @@ class MemberSeeder extends Seeder
         // Create 50 member users
         for ($i = 1; $i <= 50; $i++) {
             $members[] = [
-                'name' => fake()->name(),
+                'name' => 'Member User ' . $i,
                 'email' => 'member' . $i . '@futsal.com',
-                'phone' => fake()->phoneNumber(),
+                'phone' => '628' . str_pad($i, 9, '0', STR_PAD_LEFT),
                 'password' => bcrypt('password123'),
                 'role' => 'member',
                 'email_verified_at' => now(),
