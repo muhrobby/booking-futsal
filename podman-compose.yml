@@ -38,23 +38,23 @@ services:
       - traefik.enable=true
       - traefik.docker.network=traefik-proxy
 
-      - traefik.http.routers.hafalan.rule=Host(`futsal.humahub.my.id`)
-      - traefik.http.routers.hafalan.entrypoints=websecure
-      - traefik.http.routers.hafalan.tls=true
-      - traefik.http.routers.hafalan.tls.certresolver=cf
-      - traefik.http.routers.hafalan.service=hafalan-service
+      - traefik.http.routers.futsal.rule=Host(`futsal.humahub.my.id`)
+      - traefik.http.routers.futsal.entrypoints=websecure
+      - traefik.http.routers.futsal.tls=true
+      - traefik.http.routers.futsal.tls.certresolver=cf
+      - traefik.http.routers.futsal.service=futsal-service
 
       # Build assets get longer cache
-      - traefik.http.routers.hafalan-assets.rule=Host(`futsal.humahub.my.id`) && PathPrefix(`/build/`)
-      - traefik.http.routers.hafalan-assets.entrypoints=websecure
-      - traefik.http.routers.hafalan-assets.tls=true
-      - traefik.http.routers.hafalan-assets.tls.certresolver=cf
-      - traefik.http.routers.hafalan-assets.service=hafalan-service
-      - traefik.http.routers.hafalan-assets.middlewares=hafalan-assets-cache
+      - traefik.http.routers.futsal-assets.rule=Host(`futsal.humahub.my.id`) && PathPrefix(`/build/`)
+      - traefik.http.routers.futsal-assets.entrypoints=websecure
+      - traefik.http.routers.futsal-assets.tls=true
+      - traefik.http.routers.futsal-assets.tls.certresolver=cf
+      - traefik.http.routers.futsal-assets.service=futsal-service
+      - traefik.http.routers.futsal-assets.middlewares=futsal-assets-cache
 
       # Single service for both routers
-      - traefik.http.services.hafalan-service.loadbalancer.server.port=80
-      - traefik.http.middlewares.hafalan-assets-cache.headers.customResponseHeaders.Cache-Control=public, max-age=31536000, immutable
+      - traefik.http.services.futsal-service.loadbalancer.server.port=80
+      - traefik.http.middlewares.futsal-assets-cache.headers.customResponseHeaders.Cache-Control=public, max-age=31536000, immutable
     networks:
       # GANTI 'traefik_web' dengan nama network eksternal Traefik Anda
       - traefik-proxy
