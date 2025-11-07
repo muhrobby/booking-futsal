@@ -1,125 +1,74 @@
-############################
-# Stage 1: Composer Dependencies
-############################
-FROM composer:2.8 AS vendor
+# File: Dockerfile
 
+# --- STAGE 1: Build Dependencies (Builder Stage) ---
+# (INI SUDAH BENAR, JANGAN DIUBAH)
+FROM composer:2.7 as builder
 WORKDIR /app
-
-# Copy composer files
 COPY composer.json composer.lock ./
+RUN composer install --no-dev --prefer-dist --optimize-autoloader --ignore-platform-reqs --no-scripts
 
-# Install dependencies (production mode)
-RUN composer install \
-    --no-dev \
-    --prefer-dist \
-    --optimize-autoloader \
-    --no-interaction \
-    --no-scripts \
-    --no-progress
-
-# Copy source code and dump autoload
-COPY . .
-RUN composer dump-autoload --optimize --no-scripts
-
-############################
-# Stage 2: Frontend Build
-############################
-FROM node:20-alpine AS frontend
-
+# --- STAGE 2: Node Build (Vite/React Assets) ---
+# (INI SUDAH BENAR, JANGAN DIUBAH)
+FROM php:8.2-fpm-alpine as node_builder
+ENV LANG C.UTF-8
+RUN apk add --no-cache nodejs npm
+RUN apk add --no-cache \
+    libzip-dev \
+    libpng-dev \
+    libjpeg-turbo-dev \
+    postgresql-dev \
+    icu-dev \
+    freetype-dev \
+    libxml2-dev \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j$(nproc) gd pdo_pgsql bcmath dom zip pcntl intl
 WORKDIR /app
-
-# Copy package files
+COPY --from=builder /app /app
 COPY package.json package-lock.json ./
-
-# Install ALL dependencies (including dev) for build - CHANGED
-RUN npm ci
-
-# Copy source files needed for build
-COPY resources ./resources
-COPY public ./public
-COPY tailwind.config.js postcss.config.js vite.config.js ./
-
-# Build assets
+RUN npm install
+COPY . .
 RUN npm run build
 
-############################
-# Stage 3: PHP-FPM Runtime
-############################
-FROM php:8.2-fpm
 
-WORKDIR /var/www
+# --- STAGE 3: Final PHP-FPM Image (Production) ---
+FROM php:8.2-fpm-alpine
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-    git \
-    curl \
-    libpng-dev \
-    libjpeg-dev \
-    libfreetype6-dev \
+# Install essential extensions
+# PERUBAHAN DI SINI: Ditambahkan 'nodejs' dan 'npm'
+RUN apk add --no-cache \
     libzip-dev \
-    libicu-dev \
-    unzip \
-    && rm -rf /var/lib/apt/lists/*
+    libpng-dev \
+    libjpeg-turbo-dev \
+    postgresql-dev \
+    icu-dev \
+    freetype-dev \
+    libxml2-dev \
+    nodejs \
+    npm \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j$(nproc) gd pdo_pgsql bcmath dom zip pcntl intl
 
-# Install PHP extensions
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install -j$(nproc) \
-        pdo_mysql \
-        gd \
-        zip \
-        intl \
-        bcmath \
-        opcache
+# Set working directory for the application
+WORKDIR /var/www/html
 
-# Configure OPcache for production
-RUN { \
-    echo 'opcache.enable=1'; \
-    echo 'opcache.enable_cli=1'; \
-    echo 'opcache.memory_consumption=256'; \
-    echo 'opcache.interned_strings_buffer=16'; \
-    echo 'opcache.max_accelerated_files=20000'; \
-    echo 'opcache.validate_timestamps=0'; \
-    echo 'opcache.save_comments=1'; \
-    echo 'opcache.fast_shutdown=0'; \
-    } > /usr/local/etc/php/conf.d/opcache.ini
+# Copy application code and optimized dependencies from the builder stage
+COPY --from=builder /app /var/www/html
 
-# Configure PHP
-RUN { \
-    echo 'memory_limit=512M'; \
-    echo 'upload_max_filesize=20M'; \
-    echo 'post_max_size=20M'; \
-    echo 'max_execution_time=300'; \
-    } > /usr/local/etc/php/conf.d/custom.ini
+# Copy built frontend assets from the node_builder stage
+COPY --from=node_builder /app/public/build /var/www/html/public/build
+COPY --from=node_builder /app/resources /var/www/html/resources
 
-# Copy application code
-COPY --chown=www-data:www-data . /var/www
+# Copy the rest of the application files (e.g., controllers, views, routes)
+COPY . /var/www/html
 
-# Copy vendor from composer stage
-COPY --from=vendor --chown=www-data:www-data /app/vendor /var/www/vendor
+# Adjust permissions for storage and cache directories (important for runtime)
+RUN chown -R www-data:www-data /var/www/html \
+    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache \
+    && find /var/www/html -type f -exec chmod 664 {} \; \
+    && find /var/www/html -type d -exec chmod 775 {} \;
 
-# Copy built assets from host (should be built before Docker build)
-# If not present, use frontend stage build as fallback  
-RUN if [ ! -d /var/www/public/build ] || [ ! -f /var/www/public/build/manifest.json ]; then \
-    mkdir -p /var/www/public/build; \
-    fi
-COPY --from=frontend --chown=www-data:www-data /app/public/build /var/www/public/build
-
-# Create necessary directories
-RUN mkdir -p \
-    storage/framework/cache \
-    storage/framework/sessions \
-    storage/framework/views \
-    storage/logs \
-    bootstrap/cache \
-    && chown -R www-data:www-data storage bootstrap/cache \
-    && chmod -R 775 storage bootstrap/cache
-
-# Expose PHP-FPM port
+# Expose PHP-FPM default port
 EXPOSE 9000
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
-    CMD php-fpm-healthcheck || exit 1
-
-# Run PHP-FPM
+# Start PHP-FPM
 CMD ["php-fpm"]

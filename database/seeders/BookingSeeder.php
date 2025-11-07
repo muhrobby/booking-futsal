@@ -16,64 +16,55 @@ class BookingSeeder extends Seeder
      */
     public function run(): void
     {
-        $users = User::where('role', 'user')->get();
-        $fields = Field::where('is_active', true)->get();
+        $members = User::where('role', 'member')->get();
+        $fields = Field::all();
         $timeSlots = TimeSlot::all();
 
-        if ($fields->isEmpty() || $timeSlots->isEmpty()) {
-            $this->command->warn('Please run FieldSeeder and TimeSlotSeeder first!');
+        if ($members->isEmpty() || $fields->isEmpty() || $timeSlots->isEmpty()) {
+            $this->command->warn('⚠️  Skipping BookingSeeder: Missing required data (members, fields, or time slots)');
             return;
         }
 
-        $this->command->info('Creating bookings...');
+        $statuses = ['pending', 'confirmed', 'completed', 'cancelled'];
+        $bookingCount = 0;
 
-        // Create bookings for each user for the next 30 days
-        foreach ($users as $user) {
-            // Random number of bookings per day (0-2)
-            $bookingsPerDay = rand(0, 2);
-            
-            for ($day = 0; $day < 30; $day++) {
-                $bookingDate = Carbon::now()->addDays($day);
-                
-                // Random bookings for this day
-                $dailyBookings = rand(0, $bookingsPerDay);
-                
-                for ($b = 0; $b < $dailyBookings; $b++) {
-                    $field = $fields->random();
-                    $timeSlot = $timeSlots->random();
-                    
-                    // Try to create booking, skip if slot already taken
-                    try {
-                        Booking::create([
-                            'user_id' => $user->id,
-                            'field_id' => $field->id,
-                            'time_slot_id' => $timeSlot->id,
-                            'booking_date' => $bookingDate->format('Y-m-d'),
-                            'customer_name' => $user->name,
-                            'customer_phone' => $user->phone,
-                            'status' => $this->randomStatus($bookingDate),
-                            'notes' => rand(0, 1) ? 'Booking via seeder' : null,
-                        ]);
-                    } catch (\Exception $e) {
-                        // Skip if slot already taken (unique constraint)
-                        continue;
-                    }
+        // Generate bookings for next 30 days with varied daily amounts
+        for ($day = 1; $day <= 30; $day++) {
+            $bookingDate = Carbon::now()->addDays($day);
+
+            // Generate different number of bookings per day (2-8 bookings)
+            $bookingsPerDay = rand(2, 8);
+
+            for ($i = 0; $i < $bookingsPerDay; $i++) {
+                // Pick random member and field
+                $member = $members->random();
+                $field = $fields->random();
+                $timeSlot = $timeSlots->random();
+
+                // Random status with more confirmed bookings (70% confirmed)
+                $status = rand(1, 100) <= 70 ? 'confirmed' : $statuses[rand(0, 3)];
+
+                try {
+                    Booking::create([
+                        'user_id' => $member->id,
+                        'field_id' => $field->id,
+                        'time_slot_id' => $timeSlot->id,
+                        'booking_date' => $bookingDate->toDateString(),
+                        'customer_name' => $member->name,
+                        'customer_phone' => $member->phone,
+                        'status' => $status,
+                        'notes' => fake()->sentence(),
+                        'created_at' => $bookingDate->subDays(rand(1, 7)),
+                        'updated_at' => now(),
+                    ]);
+                    $bookingCount++;
+                } catch (\Exception $e) {
+                    // Skip if constraint violation
+                    continue;
                 }
             }
         }
 
-        $totalBookings = Booking::count();
-        $this->command->info("Created {$totalBookings} bookings successfully!");
-    }
-
-    private function randomStatus($bookingDate)
-    {
-        // Past bookings
-        if ($bookingDate->isPast()) {
-            return collect(['confirmed', 'canceled'])->random();
-        }
-        
-        // Future bookings
-        return collect(['pending', 'confirmed'])->random();
+        $this->command->info('✅ ' . $bookingCount . ' bookings created for 30 days with varied daily amounts!');
     }
 }
