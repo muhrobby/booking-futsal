@@ -2,12 +2,13 @@
 
 namespace App\Providers;
 
+use App\Events\OrderCreated;
 use App\Events\PaymentExpiredEvent;
 use App\Events\PaymentFailedEvent;
 use App\Events\PaymentSuccessfulEvent;
+use App\Listeners\SendPaymentConfirmationNotification;
 use App\Listeners\SendPaymentExpiredNotification;
 use App\Listeners\SendPaymentFailedNotification;
-use App\Listeners\SendPaymentSuccessfulNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
 class EventServiceProvider extends ServiceProvider
@@ -19,7 +20,7 @@ class EventServiceProvider extends ServiceProvider
      */
     protected $listen = [
         PaymentSuccessfulEvent::class => [
-            SendPaymentSuccessfulNotification::class,
+            SendPaymentConfirmationNotification::class,
         ],
         PaymentFailedEvent::class => [
             SendPaymentFailedNotification::class,

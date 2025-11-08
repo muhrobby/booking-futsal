@@ -15,12 +15,21 @@ class Booking extends Model
     protected $fillable = [
         'field_id','time_slot_id','booking_date',
         'customer_name','customer_phone','status','notes','user_id',
-        'start_time','end_time','total_price'
     ];
 
     protected $casts = [
         'booking_date' => 'date',
     ];
+
+    protected $appends = ['total_price'];
+
+    /**
+     * Get total price from field
+     */
+    public function getTotalPriceAttribute(): float
+    {
+        return $this->field->price_per_hour ?? 0;
+    }
 
     public function field(): BelongsTo {
         return $this->belongsTo(Field::class);

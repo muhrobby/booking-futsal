@@ -2,7 +2,7 @@
 
 namespace App\Listeners;
 
-use App\Events\PaymentSuccessful;
+use App\Events\PaymentSuccessfulEvent;
 use App\Notifications\PaymentConfirmed;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
@@ -12,7 +12,7 @@ class SendPaymentConfirmationNotification implements ShouldQueue
 {
     use InteractsWithQueue;
 
-    public function handle(PaymentSuccessful $event): void
+    public function handle(PaymentSuccessfulEvent $event): void
     {
         $order = $event->order;
         

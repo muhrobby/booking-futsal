@@ -226,7 +226,7 @@ class OrderService
             $order->releaseLock('payment_expired');
 
             // Cancel the booking
-            $order->booking()->update(['status' => 'cancelled']);
+            $order->booking()->update(['status' => 'canceled']);
 
             Log::warning('Payment expired', [
                 'order_id' => $order->id,
