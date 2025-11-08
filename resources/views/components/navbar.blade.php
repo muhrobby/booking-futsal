@@ -24,6 +24,9 @@
                     <a href="{{ route('bookings.my') }}" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 transition">
                         Booking Saya
                     </a>
+                    <a href="{{ route('orders.index') }}" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 transition">
+                        Order Saya
+                    </a>
                 @endauth
                 <a href="{{ route('contact') }}" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 transition">
                     Kontak
@@ -100,6 +103,9 @@
             @auth
                 <a href="{{ route('bookings.my') }}" class="block px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100">
                     Booking Saya
+                </a>
+                <a href="{{ route('orders.index') }}" class="block px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100">
+                    Order Saya
                 </a>
             @endauth
             <a href="{{ route('contact') }}" class="block px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100">
