@@ -107,6 +107,109 @@
                 </x-card>
             @endif
 
+            <!-- Recent Orders -->
+            <x-card>
+                <div class="pb-3 sm:pb-4 border-b border-gray-200 flex items-center justify-between">
+                    <h3 class="text-base sm:text-lg font-bold text-gray-900">Pembayaran Saya</h3>
+                    @if($pendingOrders > 0)
+                        <span class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                            {{ $pendingOrders }} Pending
+                        </span>
+                    @endif
+                </div>
+                
+                <div class="py-3 sm:py-4">
+                    @if ($recentOrders->isEmpty())
+                        <div class="text-center py-6 sm:py-8">
+                            <svg class="mx-auto h-10 w-10 sm:h-12 sm:w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                            </svg>
+                            <p class="text-gray-500 text-xs sm:text-sm mt-2">Belum ada riwayat pembayaran</p>
+                        </div>
+                    @else
+                        <div class="overflow-x-auto -mx-3 sm:mx-0">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-3 py-2 sm:px-4 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Order</th>
+                                        <th class="px-3 py-2 sm:px-4 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Lapangan</th>
+                                        <th class="px-3 py-2 sm:px-4 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
+                                        <th class="px-3 py-2 sm:px-4 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                        <th class="px-3 py-2 sm:px-4 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    @foreach ($recentOrders as $order)
+                                        <tr class="hover:bg-gray-50">
+                                            <td class="px-3 py-2 sm:px-4 sm:py-3 whitespace-nowrap">
+                                                <div class="text-xs sm:text-sm font-medium text-gray-900">#{{ $order->order_number }}</div>
+                                                <div class="text-xs text-gray-500">{{ $order->created_at->locale('id')->format('d M Y') }}</div>
+                                            </td>
+                                            <td class="px-3 py-2 sm:px-4 sm:py-3">
+                                                <div class="text-xs sm:text-sm text-gray-900">{{ $order->booking->field->name }}</div>
+                                                <div class="text-xs text-gray-500">{{ $order->booking->timeSlot->start_time->locale('id')->format('d M, H:i') }}</div>
+                                            </td>
+                                            <td class="px-3 py-2 sm:px-4 sm:py-3 whitespace-nowrap">
+                                                <div class="text-xs sm:text-sm font-bold text-gray-900">Rp {{ number_format($order->total, 0, ',', '.') }}</div>
+                                            </td>
+                                            <td class="px-3 py-2 sm:px-4 sm:py-3 whitespace-nowrap">
+                                                @if($order->status === 'paid')
+                                                    <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+                                                        Lunas
+                                                    </span>
+                                                @elseif($order->status === 'processing')
+                                                    <span class="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
+                                                        Proses
+                                                    </span>
+                                                @elseif($order->status === 'pending')
+                                                    <span class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                                        Pending
+                                                    </span>
+                                                @elseif($order->status === 'failed')
+                                                    <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">
+                                                        Gagal
+                                                    </span>
+                                                @elseif($order->status === 'expired')
+                                                    <span class="px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">
+                                                        Expired
+                                                    </span>
+                                                @else
+                                                    <span class="px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">
+                                                        {{ ucfirst($order->status) }}
+                                                    </span>
+                                                @endif
+                                            </td>
+                                            <td class="px-3 py-2 sm:px-4 sm:py-3 whitespace-nowrap text-xs sm:text-sm">
+                                                @if(in_array($order->status, ['pending', 'processing']))
+                                                    <a href="{{ route('orders.create', $order->booking) }}" class="inline-flex items-center px-2 py-1 bg-green-600 text-white text-xs rounded-lg hover:bg-green-700 transition">
+                                                        <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                                                        </svg>
+                                                        Bayar
+                                                    </a>
+                                                @else
+                                                    <a href="{{ route('orders.show', $order) }}" class="inline-flex items-center text-blue-600 hover:text-blue-700 transition">
+                                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                        </svg>
+                                                        Detail
+                                                    </a>
+                                                @endif
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <a href="{{ route('orders.index') }}" class="mt-3 sm:mt-4 block text-center text-xs sm:text-sm font-medium text-blue-600 hover:text-blue-700 transition">
+                            Lihat Semua Pembayaran →
+                        </a>
+                    @endif
+                </div>
+            </x-card>
+
             <!-- Quick Actions -->
             <x-card>
                 <div class="pb-3 sm:pb-4 border-b border-gray-200">
@@ -132,21 +235,21 @@
                         </div>
                     </a>
 
+                    <a href="{{ route('orders.index') }}" class="block">
+                        <div class="p-2 sm:p-4 bg-purple-50 rounded-lg hover:bg-purple-100 transition text-center">
+                            <svg class="w-5 sm:w-6 h-5 sm:h-6 text-purple-600 mx-auto mb-1 sm:mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                            </svg>
+                            <p class="text-xs sm:text-sm font-medium text-gray-900">Order Saya</p>
+                        </div>
+                    </a>
+
                     <a href="{{ route('profile') }}" class="block">
                         <div class="p-2 sm:p-4 bg-orange-50 rounded-lg hover:bg-orange-100 transition text-center">
                             <svg class="w-5 sm:w-6 h-5 sm:h-6 text-orange-600 mx-auto mb-1 sm:mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                             </svg>
                             <p class="text-xs sm:text-sm font-medium text-gray-900">Profile</p>
-                        </div>
-                    </a>
-
-                    <a href="{{ route('contact') }}" class="block">
-                        <div class="p-2 sm:p-4 bg-purple-50 rounded-lg hover:bg-purple-100 transition text-center">
-                            <svg class="w-5 sm:w-6 h-5 sm:h-6 text-purple-600 mx-auto mb-1 sm:mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                            </svg>
-                            <p class="text-xs sm:text-sm font-medium text-gray-900">Hubungi Kami</p>
                         </div>
                     </a>
                 </div>

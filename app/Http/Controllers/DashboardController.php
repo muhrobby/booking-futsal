@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Booking;
+use App\Models\Order;
 use App\Models\User;
 use Illuminate\View\View;
 
@@ -58,6 +59,18 @@ class DashboardController extends Controller
             }
         }
 
+        // Get recent orders (last 5)
+        $recentOrders = $user->orders()
+            ->with(['booking.field', 'booking.timeSlot'])
+            ->orderBy('created_at', 'desc')
+            ->take(5)
+            ->get();
+        
+        // Get pending orders count
+        $pendingOrders = $user->orders()
+            ->whereIn('status', ['pending', 'processing'])
+            ->count();
+
         return view('dashboard', [
             'user' => $user,
             'totalBookings' => $totalBookings,
@@ -67,6 +80,8 @@ class DashboardController extends Controller
             'recentBookings' => $recentBookings,
             'nextBooking' => $nextBooking,
             'totalSpending' => $totalSpending,
+            'recentOrders' => $recentOrders,
+            'pendingOrders' => $pendingOrders,
         ]);
     }
 }
