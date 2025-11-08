@@ -46,14 +46,16 @@ class BookingController extends Controller
             ->first();
 
         if ($existingCanceled) {
-            $existingCanceled->update($data);
+            $booking = $existingCanceled;
+            $booking->update($data);
         } else {
-            Booking::create($data);
+            $booking = Booking::create($data);
         }
 
+        // Redirect to checkout page for payment
         return redirect()
-            ->route('bookings.my', ['phone' => $data['customer_phone']])
-            ->with('status', 'Booking berhasil dibuat dan menunggu konfirmasi admin.');
+            ->route('orders.create', $booking)
+            ->with('status', 'Booking berhasil dibuat. Silakan lanjutkan pembayaran.');
     }
 
     public function myBookings(Request $request): View

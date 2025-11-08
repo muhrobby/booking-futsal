@@ -146,7 +146,7 @@ class PaymentFlowTest extends TestCase
         $orderService->handlePaymentExpired($order);
 
         $this->assertEquals('expired', $order->fresh()->status);
-        $this->assertEquals('cancelled', $this->booking->fresh()->status);
+        $this->assertEquals('canceled', $this->booking->fresh()->status);
 
         // Check booking lock released
         $this->assertDatabaseHas('booking_locks', [

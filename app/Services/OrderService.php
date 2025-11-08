@@ -339,7 +339,7 @@ class OrderService
      */
     public function updateOrderStatus(Order $order, string $newStatus, string $reason = ''): bool
     {
-        $validStatuses = ['pending', 'processing', 'paid', 'failed', 'expired', 'refunded', 'cancelled'];
+        $validStatuses = ['pending', 'processing', 'paid', 'failed', 'expired', 'refunded', 'canceled'];
 
         if (!in_array($newStatus, $validStatuses)) {
             throw new \Exception("Invalid status: {$newStatus}");
@@ -357,9 +357,9 @@ class OrderService
         if ($newStatus === 'paid' && $oldStatus !== 'paid') {
             $order->booking()->update(['status' => 'confirmed']);
             $order->releaseLock('manually_confirmed');
-        } elseif ($newStatus === 'cancelled' && $oldStatus !== 'cancelled') {
-            $order->booking()->update(['status' => 'cancelled']);
-            $order->releaseLock('manually_cancelled');
+        } elseif ($newStatus === 'canceled' && $oldStatus !== 'canceled') {
+            $order->booking()->update(['status' => 'canceled']);
+            $order->releaseLock('manually_canceled');
         }
 
         Log::warning('Order status manually updated', [

@@ -169,7 +169,7 @@ class Order extends Model
         $this->releaseLock('payment_expired');
 
         // Cancel the booking
-        $this->booking()->update(['status' => 'cancelled']);
+        $this->booking()->update(['status' => 'canceled']);
     }
 
     public function releaseLock(string $reason = ''): void
