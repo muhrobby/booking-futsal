@@ -43,8 +43,8 @@ class XenditPaymentService
                 'description' => config('payment.payment.description_template', 'Booking Futsal - {order_number}')
                     ? str_replace('{order_number}', $order->order_number, config('payment.payment.description_template'))
                     : "Booking Futsal - {$order->order_number}",
-                'success_redirect_url' => route('payment.success', ['order' => $order->id]),
-                'failure_redirect_url' => route('payment.failed', ['order' => $order->id]),
+                'success_redirect_url' => route('orders.success', ['order' => $order->id]),
+                'failure_redirect_url' => route('orders.failed', ['order' => $order->id]),
             ];
 
             // Make API request using HTTP client with basic auth
