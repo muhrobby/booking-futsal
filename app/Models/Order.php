@@ -60,6 +60,12 @@ class Order extends Model
         return $this->hasMany(PaymentTransaction::class);
     }
 
+    // Alias for transactions
+    public function paymentTransactions(): HasMany
+    {
+        return $this->transactions();
+    }
+
     public function bookingLocks(): HasMany
     {
         return $this->hasMany(BookingLock::class);
