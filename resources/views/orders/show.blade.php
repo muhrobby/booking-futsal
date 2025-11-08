@@ -24,6 +24,10 @@
                                 <span class="px-4 py-2 bg-yellow-100 text-yellow-800 rounded-full text-sm font-semibold">
                                     ⏱ Menunggu Pembayaran
                                 </span>
+                            @elseif($order->status === 'processing')
+                                <span class="px-4 py-2 bg-blue-100 text-blue-800 rounded-full text-sm font-semibold">
+                                    ⏳ Sedang Diproses
+                                </span>
                             @elseif($order->status === 'failed')
                                 <span class="px-4 py-2 bg-red-100 text-red-800 rounded-full text-sm font-semibold">
                                     ✗ Gagal
@@ -140,15 +144,18 @@
 
                     <!-- Action Buttons -->
                     <div class="border-t pt-6">
-                        <div class="flex gap-4">
+                        <div class="flex flex-col sm:flex-row gap-4">
                             <a href="{{ route('orders.index') }}" 
-                               class="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition">
+                               class="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition text-center">
                                 Kembali ke Daftar Order
                             </a>
 
-                            @if($order->status === 'pending')
+                            @if(in_array($order->status, ['pending', 'processing']))
                             <a href="{{ route('orders.create', $order->booking) }}" 
-                               class="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
+                               class="inline-flex items-center justify-center px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+                                </svg>
                                 Bayar Sekarang
                             </a>
                             @endif

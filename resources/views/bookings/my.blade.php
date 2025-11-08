@@ -115,9 +115,19 @@
                                 </span>
                             </td>
                             <td class="px-6 py-4 text-right">
-                                <button onclick="showBookingDetail({{ $booking->id }})" class="text-blue-600 hover:text-blue-700 font-medium text-sm transition">
-                                    Lihat Detail
-                                </button>
+                                <div class="flex items-center justify-end gap-3">
+                                    @if($booking->status === 'pending')
+                                        <a href="{{ route('orders.create', $booking) }}" class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm rounded-lg transition">
+                                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+                                            </svg>
+                                            Lanjutkan Pembayaran
+                                        </a>
+                                    @endif
+                                    <button onclick="showBookingDetail({{ $booking->id }})" class="text-blue-600 hover:text-blue-700 font-medium text-sm transition">
+                                        Lihat Detail
+                                    </button>
+                                </div>
                             </td>
                         </tr>
                     @endforeach
@@ -162,7 +172,15 @@
                         </div>
                     </div>
 
-                    <div class="pt-4 border-t border-gray-200">
+                    <div class="pt-4 border-t border-gray-200 space-y-2">
+                        @if($booking->status === 'pending')
+                            <a href="{{ route('orders.create', $booking) }}" class="w-full inline-flex items-center justify-center px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm rounded-lg transition">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+                                </svg>
+                                Lanjutkan Pembayaran
+                            </a>
+                        @endif
                         <button onclick="showBookingDetail({{ $booking->id }})" class="w-full text-center text-blue-600 hover:text-blue-700 font-medium text-sm transition py-2">
                             Lihat Detail
                         </button>
@@ -241,6 +259,26 @@
                     </span>
                 </div>
             </div>
+
+            ${booking.status === 'pending' ? `
+            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                <div class="flex items-start">
+                    <svg class="w-5 h-5 text-yellow-600 mr-3 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <div>
+                        <p class="text-sm font-medium text-yellow-800">Pembayaran Menunggu</p>
+                        <p class="text-sm text-yellow-700 mt-1">Silakan lanjutkan pembayaran untuk mengkonfirmasi booking Anda.</p>
+                        <a href="/bookings/${booking.id}/checkout" class="inline-flex items-center mt-3 px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white font-medium text-sm rounded-lg transition">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+                            </svg>
+                            Lanjutkan Pembayaran
+                        </a>
+                    </div>
+                </div>
+            </div>
+            ` : ''}
 
             <div class="space-y-3">
                 <div class="flex justify-between items-center">
