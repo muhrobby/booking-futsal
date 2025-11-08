@@ -1,7 +1,7 @@
 # Payment Gateway - Visual UI/UX Guide
 
 **Status**: 🎨 Design Phase Complete  
-**Framework**: Tailwind CSS 3.1  
+**Framework**: Tailwind CSS 3.1
 
 ---
 
@@ -144,6 +144,7 @@ Step 6: Success Page
 ## 3. Order Detail Page - Full Layout: `/admin/orders/{id}`
 
 ### Header Section
+
 ```
 ┌──────────────────────────────────────────────────────────────────┐
 │ 🔧 Admin Panel > 📋 Orders > Order #INV-20251108-001    [Logout]  │
@@ -156,6 +157,7 @@ Step 6: Success Page
 ```
 
 ### 3.1 Customer Information Section
+
 ```
 ┌──────────────────────────────────────────────────────────────────┐
 │ 👤 CUSTOMER INFORMATION                                           │
@@ -171,6 +173,7 @@ Step 6: Success Page
 ```
 
 ### 3.2 Booking Information Section
+
 ```
 ┌──────────────────────────────────────────────────────────────────┐
 │ 📅 BOOKING INFORMATION                                            │
@@ -187,6 +190,7 @@ Step 6: Success Page
 ```
 
 ### 3.3 Payment Breakdown Section
+
 ```
 ┌──────────────────────────────────────────────────────────────────┐
 │ 💰 PAYMENT BREAKDOWN                                              │
@@ -209,6 +213,7 @@ Step 6: Success Page
 ```
 
 ### 3.4 Payment Gateway Information Section
+
 ```
 ┌──────────────────────────────────────────────────────────────────┐
 │ 🔐 PAYMENT GATEWAY DETAILS (Xendit)                               │
@@ -231,6 +236,7 @@ Step 6: Success Page
 ```
 
 ### 3.5 Transaction History Section
+
 ```
 ┌──────────────────────────────────────────────────────────────────┐
 │ 📝 TRANSACTION HISTORY                                            │
@@ -260,6 +266,7 @@ Step 6: Success Page
 ```
 
 ### 3.6 Admin Actions Section
+
 ```
 ┌──────────────────────────────────────────────────────────────────┐
 │ ⚙️  ADMIN ACTIONS                                                 │
@@ -296,6 +303,7 @@ Step 6: Success Page
 ```
 
 ### 3.7 Admin Activity Log Section
+
 ```
 ┌──────────────────────────────────────────────────────────────────┐
 │ 📋 ADMIN ACTIVITY LOG (Audit Trail)                               │
@@ -322,6 +330,7 @@ Step 6: Success Page
 ## 4. Admin Action Modals
 
 ### Modal 1: Update Status Modal
+
 ```
 ╔══════════════════════════════════════════════════════════╗
 ║  ✏️  Update Order Status (Manual Override)               ║
@@ -366,6 +375,7 @@ Step 6: Success Page
 ```
 
 ### Modal 2: Refund Modal
+
 ```
 ╔══════════════════════════════════════════════════════════╗
 ║  💸 Process Refund                                       ║
@@ -408,6 +418,7 @@ Step 6: Success Page
 ```
 
 ### Modal 3: Gateway Response Viewer
+
 ```
 ╔══════════════════════════════════════════════════════════╗
 ║  📄 Xendit Gateway Response (Raw JSON)                   ║
@@ -446,6 +457,7 @@ Step 6: Success Page
 ## 5. Color Scheme & Icons
 
 ### Status Colors (Tailwind CSS)
+
 ```
 ✅ PAID        bg-green-100    text-green-800    border-green-300
 ⏳ PENDING     bg-yellow-100   text-yellow-800   border-yellow-300
@@ -455,6 +467,7 @@ Step 6: Success Page
 ```
 
 ### Button Styles
+
 ```
 Primary:   bg-blue-600    hover:bg-blue-700    text-white    rounded-lg
 Success:   bg-green-600   hover:bg-green-700   text-white    rounded-lg
@@ -468,6 +481,7 @@ Secondary: bg-gray-200    hover:bg-gray-300    text-gray-900 rounded-lg
 ## 6. Responsive Design Considerations
 
 ### Mobile (< 768px)
+
 ```
 - Stack all sections vertically
 - Full-width buttons
@@ -477,6 +491,7 @@ Secondary: bg-gray-200    hover:bg-gray-300    text-gray-900 rounded-lg
 ```
 
 ### Tablet (768px - 1024px)
+
 ```
 - Two-column layout for info sections
 - Inline buttons where space allows
@@ -485,6 +500,7 @@ Secondary: bg-gray-200    hover:bg-gray-300    text-gray-900 rounded-lg
 ```
 
 ### Desktop (> 1024px)
+
 ```
 - Three-column layout
 - Full modals with backdrop
@@ -496,13 +512,13 @@ Secondary: bg-gray-200    hover:bg-gray-300    text-gray-900 rounded-lg
 
 ## 7. Accessibility Features
 
-- [ ] ARIA labels for all interactive elements
-- [ ] Keyboard navigation (Tab, Enter, Escape)
-- [ ] Color not only indicator (use icons + text)
-- [ ] High contrast text (WCAG AA compliance)
-- [ ] Screen reader friendly
-- [ ] Form labels for all inputs
-- [ ] Error messages with clear guidance
+-   [ ] ARIA labels for all interactive elements
+-   [ ] Keyboard navigation (Tab, Enter, Escape)
+-   [ ] Color not only indicator (use icons + text)
+-   [ ] High contrast text (WCAG AA compliance)
+-   [ ] Screen reader friendly
+-   [ ] Form labels for all inputs
+-   [ ] Error messages with clear guidance
 
 ---
 
@@ -529,4 +545,3 @@ Auto-redirect at 0
 ---
 
 **Design Guide Complete! Ready for Frontend Implementation 🎨**
-

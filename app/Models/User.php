@@ -52,6 +52,17 @@ class User extends Authenticatable
         return $this->hasMany(Booking::class);
     }
 
+    /**
+     * Payment Relations
+     */
+    public function orders() {
+        return $this->hasMany(Order::class);
+    }
+
+    public function paymentMethods() {
+        return $this->hasMany(PaymentMethod::class);
+    }
+
     public function isAdmin(): bool {
         return $this->role === 'admin';
     }
