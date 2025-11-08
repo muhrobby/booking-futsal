@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
 use App\Models\Field;
+use App\Models\Order;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -82,6 +83,13 @@ class DashboardController extends Controller
         // Get pending confirmations
         $pendingBookings = Booking::where('status', 'pending')->count();
 
+        // Get orders statistics
+        $pendingOrders = Order::whereIn('status', ['pending', 'processing'])->count();
+        $paidOrders = Order::where('status', 'paid')->count();
+        $totalOrdersRevenue = Order::where('status', 'paid')
+            ->whereBetween('created_at', [$start, $end])
+            ->sum('total');
+
         return view('admin.dashboard', [
             'totalUsers' => $totalUsers,
             'totalFields' => $totalFields,
@@ -93,6 +101,9 @@ class DashboardController extends Controller
             'occupancyRate' => $occupancyRate,
             'todayBookings' => $todayBookings,
             'pendingBookings' => $pendingBookings,
+            'pendingOrders' => $pendingOrders,
+            'paidOrders' => $paidOrders,
+            'totalOrdersRevenue' => $totalOrdersRevenue,
             'startDate' => $startDate,
             'endDate' => $endDate,
             'chartData' => $chartData,

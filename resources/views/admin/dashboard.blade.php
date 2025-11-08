@@ -81,7 +81,7 @@
     </div>
 
     <!-- Quick Stats -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
         <!-- Pending Confirmations -->
         <x-card class="bg-blue-50 border-blue-200">
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
@@ -92,6 +92,24 @@
                 </div>
                 <svg class="w-10 h-10 sm:w-12 sm:h-12 text-blue-200 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M5 2a1 1 0 011 1v1h1V3a1 1 0 011-1h5a1 1 0 011 1v1h1V3a1 1 0 011 1v1h1a2 2 0 012 2v2h1a1 1 0 110 2h-1v2h1a1 1 0 110 2h-1v2h1a1 1 0 110 2h-1v1a2 2 0 01-2 2h-1v1a1 1 0 11-2 0v-1h-1v1a1 1 0 11-2 0v-1h-1v1a1 1 0 11-2 0v-1H7a2 2 0 01-2-2v-1H4a1 1 0 110-2h1v-2H4a1 1 0 110-2h1V9H4a1 1 0 110-2h1V7a2 2 0 012-2h1V4a1 1 0 01-1-1z" clip-rule="evenodd" />
+                </svg>
+            </div>
+        </x-card>
+
+        <!-- Pending Orders/Payments -->
+        <x-card class="bg-yellow-50 border-yellow-200">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                <div class="flex-1">
+                    <p class="text-xs sm:text-sm font-medium text-gray-600">Pembayaran Pending</p>
+                    <p class="text-2xl sm:text-3xl font-bold text-yellow-600 mt-1 sm:mt-2">{{ $pendingOrders }}</p>
+                    <p class="text-xs text-gray-500 mt-1">Menunggu pembayaran</p>
+                    <a href="{{ route('admin.orders.index', ['status' => 'pending']) }}" class="text-xs text-yellow-700 hover:text-yellow-800 font-medium mt-2 inline-block">
+                        Lihat Detail →
+                    </a>
+                </div>
+                <svg class="w-10 h-10 sm:w-12 sm:h-12 text-yellow-200 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z" />
+                    <path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd" />
                 </svg>
             </div>
         </x-card>
