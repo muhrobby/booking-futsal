@@ -73,7 +73,7 @@ class OrderController extends Controller
             'user',
             'booking.field',
             'booking.timeSlot',
-            'booking.lock',
+            'booking.bookingLocks',
             'paymentTransactions',
         ]);
 
