@@ -73,8 +73,8 @@ class OrderController extends Controller
             'user',
             'booking.field',
             'booking.timeSlot',
+            'booking.lock',
             'paymentTransactions',
-            'bookingLock',
         ]);
 
         return view('admin.orders.show', compact('order'));
