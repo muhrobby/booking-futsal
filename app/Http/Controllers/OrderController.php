@@ -99,16 +99,16 @@ class OrderController extends Controller
         }
 
         // Auto-check payment status jika masih pending (untuk handle kasus webhook belum diterima)
-        if ($order->status === 'pending') {
+        if ($order->status === 'pending' || $order->status === 'processing') {
             try {
                 $xenditService = app(\App\Services\XenditPaymentService::class);
                 
                 // Get latest transaction
                 $lastTransaction = $order->paymentTransactions()->latest()->first();
                 
-                if ($lastTransaction && $lastTransaction->invoice_id) {
+                if ($lastTransaction && $lastTransaction->gateway_invoice_id) {
                     // Check status dari Xendit API
-                    $invoiceData = $xenditService->checkInvoiceStatus($lastTransaction->invoice_id);
+                    $invoiceData = $xenditService->checkInvoiceStatus($lastTransaction->gateway_invoice_id);
                     
                     if ($invoiceData && in_array(strtoupper($invoiceData['status']), ['PAID', 'SETTLED'])) {
                         // Update order status
