@@ -82,7 +82,7 @@ class OrderController extends Controller
      */
     public function success(Request $request)
     {
-        $orderId = $request->query('order_id');
+        $orderId = $request->query('order');
         
         if (!$orderId) {
             return redirect()->route('dashboard');
@@ -96,6 +96,47 @@ class OrderController extends Controller
         if (!$order) {
             return redirect()->route('dashboard')
                 ->with('error', 'Order tidak ditemukan');
+        }
+
+        // Auto-check payment status jika masih pending (untuk handle kasus webhook belum diterima)
+        if ($order->status === 'pending') {
+            try {
+                $xenditService = app(\App\Services\XenditPaymentService::class);
+                
+                // Get latest transaction
+                $lastTransaction = $order->paymentTransactions()->latest()->first();
+                
+                if ($lastTransaction && $lastTransaction->invoice_id) {
+                    // Check status dari Xendit API
+                    $invoiceData = $xenditService->checkInvoiceStatus($lastTransaction->invoice_id);
+                    
+                    if ($invoiceData && in_array(strtoupper($invoiceData['status']), ['PAID', 'SETTLED'])) {
+                        // Update order status
+                        $this->orderService->handlePaymentSuccess($order, [
+                            'transaction_id' => $invoiceData['id'],
+                            'payment_method' => $invoiceData['payment_method'] ?? 'xendit',
+                            'payment_channel' => $invoiceData['payment_channel'] ?? null,
+                            'amount' => $invoiceData['amount'] ?? $order->total,
+                            'paid_at' => $invoiceData['paid_at'] ?? now(),
+                            'raw_response' => $invoiceData,
+                        ]);
+                        
+                        // Reload order untuk dapat status terbaru
+                        $order->refresh();
+                        $order->load(['booking.field', 'booking.timeSlot']);
+                        
+                        Log::info('Payment status auto-updated from success page', [
+                            'order_id' => $order->id,
+                            'new_status' => $order->status,
+                        ]);
+                    }
+                }
+            } catch (\Exception $e) {
+                Log::error('Failed to auto-check payment status', [
+                    'order_id' => $order->id,
+                    'error' => $e->getMessage(),
+                ]);
+            }
         }
 
         return view('orders.success', compact('order'));

@@ -346,4 +346,41 @@ class XenditPaymentService
             ];
         }
     }
+
+    /**
+     * Check invoice status from Xendit API
+     *
+     * @param string $invoiceId
+     * @return array|null
+     */
+    public function checkInvoiceStatus(string $invoiceId): ?array
+    {
+        try {
+            $response = Http::withBasicAuth($this->secretKey, '')
+                ->get("{$this->apiUrl}/v2/invoices/{$invoiceId}");
+
+            if (!$response->successful()) {
+                Log::error('Failed to check invoice status', [
+                    'invoice_id' => $invoiceId,
+                    'response' => $response->body(),
+                ]);
+                return null;
+            }
+
+            $invoice = $response->json();
+
+            Log::info('Invoice status checked', [
+                'invoice_id' => $invoiceId,
+                'status' => $invoice['status'] ?? 'unknown',
+            ]);
+
+            return $invoice;
+        } catch (\Exception $e) {
+            Log::error('Exception checking invoice status', [
+                'invoice_id' => $invoiceId,
+                'error' => $e->getMessage(),
+            ]);
+            return null;
+        }
+    }
 }
