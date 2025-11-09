@@ -1,0 +1,118 @@
+⏰ AUTO-CANCEL EXPIRED BOOKINGS SYSTEM
+=====================================
+
+✅ SYSTEM IMPLEMENTED
+
+🎯 How It Works:
+
+1. USER CREATES ORDER (Checkout)
+   ↓
+   Booking status = "pending"
+   Booking expires_at = now() + 30 minutes
+   Booking lock created (30 min)
+
+2. AUTO-CHECK (Every 5 Minutes)
+   ↓
+   Job runs: CancelExpiredBookings
+   Find: Booking WHERE status='pending' AND expires_at < now()
+   Action: Cancel + release lock + add note
+
+3. PAYMENT SUCCESS (Within 30 min)
+   ↓
+   Order status = "paid"
+   Booking status = "confirmed"
+   Booking expires_at = NULL (cleared)
+
+4. PAYMENT FAILED
+   ↓
+   Order status = "failed"
+   Booking status = "available" (reverted)
+   Booking expires_at = NULL (cleared)
+
+✅ FILES CREATED/MODIFIED
+
+New Files:
+  ✓ app/Jobs/CancelExpiredBookings.php
+  ✓ app/Console/Kernel.php
+  ✓ app/Console/Commands/TestCancelExpiredBookings.php
+  ✓ database/migrations/2025_11_09_205519_add_expires_at_to_bookings_table.php
+  ✓ docs/AUTO-CANCEL-BOOKINGS.md
+
+Modified Files:
+  ✓ app/Models/Booking.php (add expires_at to fillable & casts)
+  ✓ app/Services/OrderService.php (set/clear expires_at)
+
+📊 CONFIGURATION
+
+.env settings:
+  PAYMENT_TIMEOUT_MINUTES=30     # Default
+  PAYMENT_CURRENCY=IDR
+
+Database:
+  bookings.expires_at (nullable timestamp)
+
+Scheduler:
+  - Every 5 minutes: Run CancelExpiredBookings job
+  - Daily at 00:00: Run cleanup
+
+🔧 TESTING
+
+Manual test:
+  $ php artisan test:cancel-bookings
+
+Check expired bookings:
+  $ php artisan tinker
+  > \App\Models\Booking::where('status','pending')
+      ->where('expires_at','<',now())->get()
+
+View logs:
+  $ tail -f storage/logs/laravel.log
+
+📈 STATUS FLOW
+
+Order Created (pending) → +30 min timeout
+       ↓
+   [Two Paths]
+   
+Path 1: Payment Success
+   ↓
+Booking CONFIRMED ✓
+Slot locked permanently
+   
+Path 2: Timeout (No Payment)
+   ↓ [Auto-cancel runs]
+Booking CANCELLED ✗
+Slot available for others
+
+🚀 PRODUCTION SETUP
+
+Add to server crontab:
+* * * * * cd /path/to/booking-futsal && php artisan schedule:run >> /dev/null 2>&1
+
+This enables:
+  - Automatic booking cancellation
+  - Every 5 minute monitoring
+  - Daily cleanup at midnight
+
+⚠️ IMPORTANT
+
+✓ Timezone must be configured in config/app.php
+✓ Cron job MUST be running in production
+✓ Queue driver: database (configured)
+✓ Lock timeout: 30 minutes (configurable)
+✓ Auto-cancel logs saved to storage/logs/laravel.log
+
+📝 EXAMPLE LOG OUTPUT
+
+[2025-11-09 21:05:00] local.INFO: Auto-cancelled 2 expired bookings
+[2025-11-09 21:10:00] local.INFO: Auto-cancelled 1 expired bookings
+[2025-11-09 21:15:00] local.INFO: No expired bookings found
+
+✅ SYSTEM STATUS: READY FOR PRODUCTION
+
+When user doesn't pay within 30 minutes:
+  ✓ Booking automatically cancelled
+  ✓ Slot becomes available
+  ✓ Other users can book that time
+  ✓ Lock is released
+  ✓ Order marked as expired/failed
