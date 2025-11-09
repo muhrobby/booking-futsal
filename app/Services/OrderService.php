@@ -40,6 +40,13 @@ class OrderService
                 'currency' => config('payment.payment.currency', 'IDR'),
             ]);
 
+            // Update booking status to pending and set expires_at
+            $paymentTimeout = config('payment.timeout_minutes', 30);
+            $booking->update([
+                'status' => 'pending',
+                'expires_at' => now()->addMinutes($paymentTimeout),
+            ]);
+
             // Create booking lock (30 minutes)
             $booking->lockForPayment($order);
 
@@ -48,6 +55,7 @@ class OrderService
                 'booking_id' => $booking->id,
                 'user_id' => $user->id,
                 'amount' => $order->total,
+                'expires_at' => $booking->expires_at,
             ]);
 
             return $order;
@@ -135,8 +143,11 @@ class OrderService
             // Mark order as paid
             $order->markAsPaid();
 
-            // Update the booking to confirmed
-            $order->booking()->update(['status' => 'confirmed']);
+            // Update the booking to confirmed and clear expires_at
+            $order->booking()->update([
+                'status' => 'confirmed',
+                'expires_at' => null,
+            ]);
 
             // Release the booking lock
             $order->releaseLock('payment_confirmed');
@@ -182,7 +193,11 @@ class OrderService
             // Mark order as failed
             $order->markAsFailed($errorMessage);
 
-            // Release the lock
+            // Release the lock and revert booking to available
+            $order->booking()->update([
+                'status' => 'available',
+                'expires_at' => null,
+            ]);
             $order->releaseLock('payment_failed');
 
             // Log transaction

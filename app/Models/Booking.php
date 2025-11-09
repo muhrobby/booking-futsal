@@ -14,11 +14,12 @@ class Booking extends Model
 
     protected $fillable = [
         'field_id','time_slot_id','booking_date',
-        'customer_name','customer_phone','status','notes','user_id',
+        'customer_name','customer_phone','status','notes','user_id','expires_at',
     ];
 
     protected $casts = [
         'booking_date' => 'date',
+        'expires_at' => 'datetime',
     ];
 
     protected $appends = ['total_price'];
