@@ -33,7 +33,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 abstract class TestCase extends BaseTestCase
 {
     use RefreshDatabase;  // Auto migrate + cleanup setelah setiap test
-    
+
     protected function defineEnvironment($app)
     {
         $app['config']->set('database.default', 'testing');
@@ -114,6 +114,7 @@ XenditPaymentService
 ## Key Test Utilities
 
 ### 1. RefreshDatabase Trait
+
 ```php
 trait RefreshDatabase
 {
@@ -125,6 +126,7 @@ trait RefreshDatabase
 ```
 
 ### 2. Factory Classes
+
 ```php
 User::factory()->create()       // Create fake user
 Field::factory()->create()      // Create fake field
@@ -133,6 +135,7 @@ Booking::create([...])          // Create booking manually
 ```
 
 ### 3. HTTP Fake/Assert
+
 ```php
 Http::fake([...])               // Setup fake responses
 Http::assertSent(...)           // Verify request was sent
@@ -157,23 +160,24 @@ php artisan test tests/Feature/PaymentGatewayTest.php --watch
 
 ## Performance Metrics
 
-| Test | Duration | Assertions |
-|------|----------|-----------|
-| create_order_with_mocked_xendit | 1.10s | 5 |
-| process_payment_with_mocked_xendit | 0.13s | 3 |
-| handle_payment_success_with_mock | 0.37s | 3 |
-| handle_payment_failed_with_mock | 0.08s | 3 |
-| payment_retry_scenario | 0.25s | 4 |
-| check_invoice_status_mock | 0.10s | 3 |
-| **TOTAL** | **2.28s** | **21** |
+| Test                               | Duration  | Assertions |
+| ---------------------------------- | --------- | ---------- |
+| create_order_with_mocked_xendit    | 1.10s     | 5          |
+| process_payment_with_mocked_xendit | 0.13s     | 3          |
+| handle_payment_success_with_mock   | 0.37s     | 3          |
+| handle_payment_failed_with_mock    | 0.08s     | 3          |
+| payment_retry_scenario             | 0.25s     | 4          |
+| check_invoice_status_mock          | 0.10s     | 3          |
+| **TOTAL**                          | **2.28s** | **21**     |
 
 ## Offline Testing Capability
 
 ✅ **100% Offline**: Semua tests berjalan tanpa internet connection
 
 Mengapa?
+
 1. Database: SQLite in-memory (no network required)
-2. API Calls: Semua di-mock dengan `Http::fake()` 
+2. API Calls: Semua di-mock dengan `Http::fake()`
 3. No External Dependencies: Semua data generated locally
 
 ```bash
@@ -210,4 +214,3 @@ Tests dapat di-integrate ke CI/CD pipeline:
 ```
 
 No extra dependencies needed - semua sudah self-contained!
-

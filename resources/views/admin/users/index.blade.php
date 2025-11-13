@@ -40,7 +40,7 @@
                     >
                         <option value="">Semua Role</option>
                         <option value="admin" {{ request('role') == 'admin' ? 'selected' : '' }}>Admin</option>
-                        <option value="user" {{ request('role') == 'user' ? 'selected' : '' }}>User</option>
+                        <option value="member" {{ request('role') == 'member' ? 'selected' : '' }}>Member</option>
                     </select>
                 </div>
                 <div class="flex gap-1 sm:gap-2">
@@ -86,7 +86,7 @@
                             @if($user->role === 'admin')
                                 <span class="inline-block px-2 sm:px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-semibold">Admin</span>
                             @else
-                                <span class="inline-block px-2 sm:px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-semibold">User</span>
+                                <span class="inline-block px-2 sm:px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-semibold">Member</span>
                             @endif
                         </td>
                         <td class="hidden sm:table-cell px-3 sm:px-6 py-2 sm:py-4 text-xs sm:text-sm text-gray-600">

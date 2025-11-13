@@ -83,7 +83,7 @@
                 >
                     <option value="">Pilih Role</option>
                     <option value="admin" {{ old('role') === 'admin' ? 'selected' : '' }}>Admin</option>
-                    <option value="user" {{ old('role') === 'user' ? 'selected' : '' }}>User</option>
+                    <option value="member" {{ old('role') === 'member' ? 'selected' : '' }}>Member</option>
                 </select>
                 @error('role')
                     <p class="text-red-500 text-xs sm:text-sm mt-1">{{ $message }}</p>

@@ -25,7 +25,8 @@ class DatabaseSeeder extends Seeder
             MemberSeeder::class,
             FieldSeeder::class,
             TimeSlotSeeder::class,
-            BookingSeeder::class,
+            OrderSeeder::class,
+            // BookingSeeder::class,
         ]);
     }
 }

@@ -3,12 +3,13 @@
 Dokumentasi lengkap untuk testing payment gateway Xendit **tanpa koneksi internet** menggunakan HTTP mocking.
 
 ## Daftar Isi
-- [Overview](#overview)
-- [Quick Start](#quick-start)
-- [Test Scenarios](#test-scenarios)
-- [How It Works](#how-it-works)
-- [Offline Testing](#offline-testing)
-- [Troubleshooting](#troubleshooting)
+
+-   [Overview](#overview)
+-   [Quick Start](#quick-start)
+-   [Test Scenarios](#test-scenarios)
+-   [How It Works](#how-it-works)
+-   [Offline Testing](#offline-testing)
+-   [Troubleshooting](#troubleshooting)
 
 ---
 
@@ -17,12 +18,13 @@ Dokumentasi lengkap untuk testing payment gateway Xendit **tanpa koneksi interne
 Aplikasi booking futsal menggunakan **Xendit Payment Gateway** untuk memproses pembayaran. Untuk development dan testing, kita menggunakan **HTTP Mocking** agar dapat melakukan testing tanpa memerlukan koneksi internet ke server Xendit.
 
 ### Keuntungan HTTP Mocking:
-- ✅ Testing tanpa internet connection
-- ✅ Predictable responses (tidak ada random failures)
-- ✅ Fast execution (tidak perlu menunggu API response)
-- ✅ Test coverage yang comprehensive
-- ✅ Tidak perlu sandbox account
-- ✅ Dapat mensimulasikan berbagai skenario (success, failed, expired)
+
+-   ✅ Testing tanpa internet connection
+-   ✅ Predictable responses (tidak ada random failures)
+-   ✅ Fast execution (tidak perlu menunggu API response)
+-   ✅ Test coverage yang comprehensive
+-   ✅ Tidak perlu sandbox account
+-   ✅ Dapat mensimulasikan berbagai skenario (success, failed, expired)
 
 ---
 
@@ -35,6 +37,7 @@ php artisan test tests/Feature/PaymentGatewayTest.php
 ```
 
 Hasil yang diharapkan:
+
 ```
 PASS  Tests\Feature\PaymentGatewayTest
 ✓ create order with mocked xendit                      1.10s
@@ -73,6 +76,7 @@ php artisan test tests/Feature/PaymentGatewayTest.php --watch
 ## Test Scenarios
 
 ### Test 1: Create Order dengan Mock Xendit
+
 **File**: `tests/Feature/PaymentGatewayTest.php::test_create_order_with_mocked_xendit`
 
 ```php
@@ -86,6 +90,7 @@ php artisan test tests/Feature/PaymentGatewayTest.php --watch
 ```
 
 **Yang di-mock**:
+
 ```php
 Http::fake([
     'api.xendit.co/v2/invoices' => Http::response([
@@ -98,14 +103,16 @@ Http::fake([
 ```
 
 **Assertions**:
-- Order status = 'pending'
-- Order total = 175000
-- Booking status = 'pending'
-- Booking expires_at is not null
+
+-   Order status = 'pending'
+-   Order total = 175000
+-   Booking status = 'pending'
+-   Booking expires_at is not null
 
 ---
 
 ### Test 2: Process Payment dengan Mock
+
 **File**: `tests/Feature/PaymentGatewayTest.php::test_process_payment_with_mocked_xendit`
 
 ```php
@@ -119,13 +126,15 @@ Http::fake([
 ```
 
 **Assertions**:
-- Result['success'] = true
-- Result['redirect_url'] is not null
-- Order status = 'processing'
+
+-   Result['success'] = true
+-   Result['redirect_url'] is not null
+-   Order status = 'processing'
 
 ---
 
 ### Test 3: Payment Success Handler
+
 **File**: `tests/Feature/PaymentGatewayTest.php::test_handle_payment_success_with_mock`
 
 ```php
@@ -139,13 +148,15 @@ Http::fake([
 ```
 
 **Assertions**:
-- Order status = 'paid'
-- Booking status = 'confirmed'
-- Booking expires_at = null (sudah di-clear)
+
+-   Order status = 'paid'
+-   Booking status = 'confirmed'
+-   Booking expires_at = null (sudah di-clear)
 
 ---
 
 ### Test 4: Payment Failed Handler
+
 **File**: `tests/Feature/PaymentGatewayTest.php::test_handle_payment_failed_with_mock`
 
 ```php
@@ -159,13 +170,15 @@ Http::fake([
 ```
 
 **Assertions**:
-- Order status = 'failed'
-- Booking status = 'pending'
-- Booking expires_at = null
+
+-   Order status = 'failed'
+-   Booking status = 'pending'
+-   Booking expires_at = null
 
 ---
 
 ### Test 5: Payment Retry Scenario
+
 **File**: `tests/Feature/PaymentGatewayTest.php::test_payment_retry_scenario`
 
 ```php
@@ -179,20 +192,23 @@ Http::fake([
 ```
 
 **Flow**:
+
 ```
 Order 1 → Failed → Booking: pending
 Order 2 → Success → Booking: confirmed
 ```
 
 **Assertions**:
-- Order 1 status = 'failed'
-- Booking status (after order 1) = 'pending'
-- Order 2 status = 'paid'
-- Booking status (after order 2) = 'confirmed'
+
+-   Order 1 status = 'failed'
+-   Booking status (after order 1) = 'pending'
+-   Order 2 status = 'paid'
+-   Booking status (after order 2) = 'confirmed'
 
 ---
 
 ### Test 6: Invoice Status Check
+
 **File**: `tests/Feature/PaymentGatewayTest.php::test_check_invoice_status_mock`
 
 ```php
@@ -205,9 +221,10 @@ Order 2 → Success → Booking: confirmed
 ```
 
 **Assertions**:
-- invoiceData is not null
-- invoiceData['status'] = 'PAID'
-- invoiceData['amount'] = 175000
+
+-   invoiceData is not null
+-   invoiceData['status'] = 'PAID'
+-   invoiceData['amount'] = 175000
 
 ---
 
@@ -216,6 +233,7 @@ Order 2 → Success → Booking: confirmed
 ### 1. HTTP Mocking Setup
 
 Di `tests/TestCase.php`:
+
 ```php
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -233,6 +251,7 @@ abstract class TestCase extends BaseTestCase
 ### 2. Mock HTTP Responses
 
 Di test methods:
+
 ```php
 use Illuminate\Support\Facades\Http;
 
@@ -250,6 +269,7 @@ Http::fake([
 ### 3. Database Isolation
 
 Setiap test:
+
 1. Create fresh in-memory SQLite database
 2. Run migrations
 3. Create test data (User, Field, TimeSlot, Booking)
@@ -296,6 +316,7 @@ Http::preventStrayRequests();
 **Penyebab**: URL endpoint tidak cocok dengan mock pattern
 
 **Solusi**:
+
 ```php
 // ❌ SALAH
 Http::fake([
@@ -318,6 +339,7 @@ Http::fake([
 **Penyebab**: Invalid enum value untuk booking status
 
 **Solusi**:
+
 ```php
 // ❌ SALAH - 'available' bukan valid status
 $booking->update(['status' => 'available']);
@@ -330,14 +352,16 @@ $booking->update(['status' => 'pending']);
 
 **Penyebab**: Blade template syntax error
 
-**Solusi**: 
-- Pastikan `@extends` ada di awal file
-- Pastikan `@section` dan `@endsection` seimbang
-- Gunakan `@section('content')` bukan `@section('content'`
+**Solusi**:
+
+-   Pastikan `@extends` ada di awal file
+-   Pastikan `@section` dan `@endsection` seimbang
+-   Gunakan `@section('content')` bukan `@section('content'`
 
 ### Test Timeout
 
 **Solusi**:
+
 ```bash
 # Increase timeout
 php artisan test tests/Feature/PaymentGatewayTest.php --timeout=60
@@ -347,12 +371,12 @@ php artisan test tests/Feature/PaymentGatewayTest.php --timeout=60
 
 ## Testing Checklist
 
-- [ ] Semua 6 tests pass
-- [ ] Tidak ada error messages di output
-- [ ] Duration di bawah 3 detik total
-- [ ] Dapat run offline (tanpa internet)
-- [ ] Database clean setelah test (migrations fresh)
-- [ ] Mock responses realistic dan correct
+-   [ ] Semua 6 tests pass
+-   [ ] Tidak ada error messages di output
+-   [ ] Duration di bawah 3 detik total
+-   [ ] Dapat run offline (tanpa internet)
+-   [ ] Database clean setelah test (migrations fresh)
+-   [ ] Mock responses realistic dan correct
 
 ---
 
@@ -361,33 +385,34 @@ php artisan test tests/Feature/PaymentGatewayTest.php --timeout=60
 Setelah testing di local, Anda dapat:
 
 1. **Test dengan Real API** (staging):
-   ```bash
-   # Update .env
-   XENDIT_API_URL=https://app.xendit.co
-   XENDIT_SECRET_KEY=your_staging_key
-   
-   # Jalankan aplikasi
-   php artisan serve
-   ```
+
+    ```bash
+    # Update .env
+    XENDIT_API_URL=https://app.xendit.co
+    XENDIT_SECRET_KEY=your_staging_key
+
+    # Jalankan aplikasi
+    php artisan serve
+    ```
 
 2. **End-to-End Testing** di browser:
-   - Visit http://localhost:8000
-   - Create booking
-   - Click "Bayar Sekarang"
-   - Verify redirect ke Xendit checkout
-   - Verify payment status update
+
+    - Visit http://localhost:8000
+    - Create booking
+    - Click "Bayar Sekarang"
+    - Verify redirect ke Xendit checkout
+    - Verify payment status update
 
 3. **Production Deployment**:
-   - Switch ke production API keys
-   - Test dengan real payment methods
-   - Monitor webhook logs
-   - Set up error alerting
+    - Switch ke production API keys
+    - Test dengan real payment methods
+    - Monitor webhook logs
+    - Set up error alerting
 
 ---
 
 ## Reference
 
-- **Xendit Documentation**: https://docs.xendit.co
-- **Laravel Testing**: https://laravel.com/docs/testing
-- **Laravel HTTP Client**: https://laravel.com/docs/http-client
-
+-   **Xendit Documentation**: https://docs.xendit.co
+-   **Laravel Testing**: https://laravel.com/docs/testing
+-   **Laravel HTTP Client**: https://laravel.com/docs/http-client
