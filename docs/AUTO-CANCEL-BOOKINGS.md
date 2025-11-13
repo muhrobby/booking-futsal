@@ -7,6 +7,7 @@ Sistem otomatis untuk membatalkan booking yang pending lebih dari waktu yang dit
 ## 📋 Workflow
 
 ### 1. **Saat User Membuat Order (Checkout)**
+
 ```
 User clicks "Bayar" → OrderService.createOrder()
   ↓
@@ -17,6 +18,7 @@ Booking lock created → 30 minutes
 ```
 
 ### 2. **Monitoring Expired Bookings** (Every 5 minutes)
+
 ```
 CancelExpiredBookings Job runs
   ↓
@@ -30,6 +32,7 @@ For each expired booking:
 ```
 
 ### 3. **On Payment Success**
+
 ```
 Payment confirmed → handlePaymentSuccess()
   ↓
@@ -40,6 +43,7 @@ Booking lock → released
 ```
 
 ### 4. **On Payment Failed**
+
 ```
 Payment failed → handlePaymentFailed()
   ↓
@@ -52,12 +56,14 @@ Booking lock → released
 ## 🔧 Configuration
 
 File: `.env`
+
 ```properties
 PAYMENT_TIMEOUT_MINUTES=30    # Default: 30 minutes
 PAYMENT_CURRENCY=IDR
 ```
 
 File: `config/payment.php`
+
 ```php
 'payment' => [
     'timeout_minutes' => env('PAYMENT_TIMEOUT_MINUTES', 30),
@@ -68,6 +74,7 @@ File: `config/payment.php`
 ## 📊 Database
 
 ### Bookings Table
+
 ```sql
 ALTER TABLE bookings ADD COLUMN expires_at TIMESTAMP NULL;
 -- Nullable timestamp untuk booking expiration
@@ -76,33 +83,41 @@ ALTER TABLE bookings ADD COLUMN expires_at TIMESTAMP NULL;
 ## 🎯 Components
 
 ### 1. **Job: CancelExpiredBookings**
+
 Location: `app/Jobs/CancelExpiredBookings.php`
 
 Logika:
-- Query booking dengan status='pending' dan expires_at < now()
-- Release active booking locks
-- Update status ke 'cancelled'
-- Add auto-cancel note
+
+-   Query booking dengan status='pending' dan expires_at < now()
+-   Release active booking locks
+-   Update status ke 'cancelled'
+-   Add auto-cancel note
 
 ### 2. **Service: OrderService**
+
 Location: `app/Services/OrderService.php`
 
 Perubahan:
-- `createOrder()`: Set booking.expires_at saat membuat order
-- `handlePaymentSuccess()`: Clear booking.expires_at saat bayar berhasil
-- `handlePaymentFailed()`: Revert booking status dan clear expires_at
+
+-   `createOrder()`: Set booking.expires_at saat membuat order
+-   `handlePaymentSuccess()`: Clear booking.expires_at saat bayar berhasil
+-   `handlePaymentFailed()`: Revert booking status dan clear expires_at
 
 ### 3. **Model: Booking**
+
 Location: `app/Models/Booking.php`
 
 Perubahan:
-- Tambah `expires_at` ke fillable
-- Cast expires_at ke datetime
+
+-   Tambah `expires_at` ke fillable
+-   Cast expires_at ke datetime
 
 ### 4. **Scheduler: Console/Kernel**
+
 Location: `app/Console/Kernel.php`
 
 Schedule:
+
 ```php
 // Setiap 5 menit
 $schedule->job(new CancelExpiredBookings())
@@ -116,9 +131,11 @@ $schedule->job(new CancelExpiredBookings())
 ```
 
 ### 5. **Command: TestCancelExpiredBookings**
+
 Location: `app/Console/Commands/TestCancelExpiredBookings.php`
 
 Usage:
+
 ```bash
 php artisan test:cancel-bookings
 ```
@@ -128,6 +145,7 @@ php artisan test:cancel-bookings
 ### Manual Testing
 
 1. **Create booking pending:**
+
 ```php
 // Via tinker or test code
 $booking = Booking::create([
@@ -143,11 +161,13 @@ $booking = Booking::create([
 ```
 
 2. **Run cancel job:**
+
 ```bash
 php artisan test:cancel-bookings
 ```
 
 3. **Verify:**
+
 ```php
 $booking->refresh();
 echo $booking->status; // Should be 'cancelled'
@@ -156,14 +176,16 @@ echo $booking->status; // Should be 'cancelled'
 ### Production Setup
 
 1. **Configure cron job** (in server crontab):
+
 ```bash
 * * * * * cd /path/to/booking-futsal && php artisan schedule:run >> /dev/null 2>&1
 ```
 
 2. **The scheduler will automatically:**
-- Run CancelExpiredBookings job every 5 minutes
-- Run cleanup at 00:00 daily
-- Use `withoutOverlapping()` to prevent duplicate runs
+
+-   Run CancelExpiredBookings job every 5 minutes
+-   Run cleanup at 00:00 daily
+-   Use `withoutOverlapping()` to prevent duplicate runs
 
 ## 📈 Status Timeline
 
@@ -173,14 +195,14 @@ Order Created
 Booking Status: PENDING
     ↓
 [2 scenarios]
-    
+
 Scenario A: Payment Success (within 30 min)
     ↓
 Booking Status: CONFIRMED
 Booking expires_at: NULL
-    ↓ 
+    ↓
 ✅ Booking locked & confirmed
-    
+
 Scenario B: Timeout (30 min passed without payment)
     ↓ [Auto-cancel runs]
 Booking Status: CANCELLED
@@ -192,11 +214,13 @@ Booking expires_at: NULL
 ## 🔍 Monitoring
 
 ### Check pending bookings:
+
 ```php
 $pending = Booking::where('status', 'pending')->get();
 ```
 
 ### Check expired bookings:
+
 ```php
 $expired = Booking::where('status', 'pending')
     ->where('expires_at', '<', now())
@@ -204,6 +228,7 @@ $expired = Booking::where('status', 'pending')
 ```
 
 ### Check logs:
+
 ```bash
 tail -f storage/logs/laravel.log | grep "Auto-cancelled"
 ```
@@ -218,13 +243,13 @@ tail -f storage/logs/laravel.log | grep "Auto-cancelled"
 
 ## 🧪 Testing Checklist
 
-- [ ] User creates order → booking.expires_at is set
-- [ ] Payment success within 30 min → booking confirmed, expires_at cleared
-- [ ] Payment failed → booking reverted to available, expires_at cleared
-- [ ] Booking expired without payment → auto-cancelled by job
-- [ ] Expired slot available for new bookings
-- [ ] Manual test: `php artisan test:cancel-bookings` works
-- [ ] Logs show auto-cancelled bookings
+-   [ ] User creates order → booking.expires_at is set
+-   [ ] Payment success within 30 min → booking confirmed, expires_at cleared
+-   [ ] Payment failed → booking reverted to available, expires_at cleared
+-   [ ] Booking expired without payment → auto-cancelled by job
+-   [ ] Expired slot available for new bookings
+-   [ ] Manual test: `php artisan test:cancel-bookings` works
+-   [ ] Logs show auto-cancelled bookings
 
 ## 📝 Logs Example
 

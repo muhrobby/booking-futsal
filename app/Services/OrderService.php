@@ -193,9 +193,9 @@ class OrderService
             // Mark order as failed
             $order->markAsFailed($errorMessage);
 
-            // Release the lock and revert booking to available
+            // Release the lock and revert booking to pending
             $order->booking()->update([
-                'status' => 'available',
+                'status' => 'pending',
                 'expires_at' => null,
             ]);
             $order->releaseLock('payment_failed');
