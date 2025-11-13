@@ -31,11 +31,23 @@ class OrderController extends Controller
                 ->with('error', 'Booking ini sudah diproses');
         }
 
-        return view('orders.create', compact('booking'));
+        // Check if order already exists for this booking
+        $order = $booking->orders()->first();
+        if (!$order) {
+            // Order should have been created in BookingController, but create if missing
+            try {
+                $order = app(\App\Services\OrderService::class)->createOrder($booking, Auth::user());
+            } catch (\Exception $e) {
+                return redirect()->route('bookings.show', $booking)
+                    ->with('error', 'Gagal membuat order: ' . $e->getMessage());
+            }
+        }
+
+        return view('orders.create', compact('booking', 'order'));
     }
 
     /**
-     * Create order and initiate payment
+     * Initiate payment for existing order
      */
     public function store(Request $request, Booking $booking)
     {
@@ -45,8 +57,11 @@ class OrderController extends Controller
                 abort(403, 'Unauthorized access to booking');
             }
 
-            // Create order
-            $order = $this->orderService->createOrder($booking, Auth::user());
+            // Get the auto-created order
+            $order = $booking->orders()->first();
+            if (!$order) {
+                throw new \Exception('Order not found. Please try again.');
+            }
 
             // Process payment (generate Xendit invoice)
             $paymentResult = $this->orderService->processPayment($order);

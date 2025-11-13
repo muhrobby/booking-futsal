@@ -44,12 +44,20 @@ class BookingTest extends TestCase
             'notes' => 'Catatan uji',
         ]);
 
-        $response->assertRedirect(route('bookings.my', ['phone' => '08123456789']));
+        // After creating booking, system auto-creates order and redirects to checkout
+        $booking = Booking::where('customer_phone', '08123456789')->first();
+        $response->assertRedirect(route('orders.create', $booking));
 
         $this->assertDatabaseHas('bookings', [
             'field_id' => $field->id,
             'time_slot_id' => $slot->id,
             'customer_phone' => '08123456789',
+            'status' => 'pending',
+        ]);
+
+        // Verify order was auto-created
+        $this->assertDatabaseHas('orders', [
+            'booking_id' => $booking->id,
             'status' => 'pending',
         ]);
 
@@ -124,13 +132,24 @@ class BookingTest extends TestCase
             'is_active' => true,
         ]);
 
-        Booking::create([
+        $booking = Booking::create([
             'field_id' => $field->id,
             'time_slot_id' => $slot->id,
             'booking_date' => now()->addDay()->toDateString(),
             'customer_name' => 'Member Test',
             'customer_phone' => '08123456789',
             'status' => 'pending',
+            'user_id' => $user->id,
+        ]);
+
+        // Create order for booking
+        \App\Models\Order::create([
+            'booking_id' => $booking->id,
+            'user_id' => $user->id,
+            'status' => 'pending',
+            'subtotal' => 100000,
+            'total' => 100000,
+            'currency' => 'IDR',
         ]);
 
         $response = $this->actingAs($user)->get(route('bookings.my', ['phone' => '08123456789']));
@@ -179,12 +198,20 @@ class BookingTest extends TestCase
             'customer_phone' => '08123456789',
         ]);
 
-        $response->assertRedirect(route('bookings.my', ['phone' => '08123456789']));
+        // After creating booking, system auto-creates order and redirects to checkout
+        $booking = Booking::where('customer_phone', '08123456789')->first();
+        $response->assertRedirect(route('orders.create', $booking));
 
         $this->assertDatabaseHas('bookings', [
             'id' => $canceledBooking->id,
             'customer_name' => 'Member Test',
             'customer_phone' => '08123456789',
+            'status' => 'pending',
+        ]);
+
+        // Verify order was auto-created
+        $this->assertDatabaseHas('orders', [
+            'booking_id' => $booking->id,
             'status' => 'pending',
         ]);
     }

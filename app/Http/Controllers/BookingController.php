@@ -9,6 +9,7 @@ use App\Models\TimeSlot;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 
 class BookingController extends Controller
@@ -52,10 +53,26 @@ class BookingController extends Controller
             $booking = Booking::create($data);
         }
 
-        // Redirect to checkout page for payment
-        return redirect()
-            ->route('orders.create', $booking)
-            ->with('status', 'Booking berhasil dibuat. Silakan lanjutkan pembayaran.');
+        // Auto-create order immediately after booking creation
+        try {
+            $orderService = app(\App\Services\OrderService::class);
+            $order = $orderService->createOrder($booking, Auth::user());
+
+            // Redirect to checkout page for payment
+            return redirect()
+                ->route('orders.create', $booking)
+                ->with('status', 'Booking berhasil dibuat. Silakan lanjutkan pembayaran.')
+                ->with('order_id', $order->id);
+        } catch (\Exception $e) {
+            Log::error('Failed to create order', [
+                'booking_id' => $booking->id,
+                'error' => $e->getMessage(),
+            ]);
+
+            return redirect()
+                ->route('orders.create', $booking)
+                ->with('error', 'Terjadi kesalahan saat membuat order, silakan coba lagi.');
+        }
     }
 
     public function myBookings(Request $request): View

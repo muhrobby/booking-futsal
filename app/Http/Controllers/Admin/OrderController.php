@@ -93,7 +93,7 @@ class OrderController extends Controller
         try {
             $oldStatus = $order->status;
             $order->status = $request->status;
-            $order->notes = $request->notes;
+            $order->admin_notes = $request->notes;
             $order->save();
 
             Log::info('Order status updated manually', [

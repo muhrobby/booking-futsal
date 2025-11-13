@@ -7,6 +7,7 @@
 Halaman `/admin/orders` menampilkan **ORDERS** (pesanan pembayaran), bukan **BOOKINGS** (reservasi lapangan).
 
 **Data Structure**:
+
 ```
 Booking (Reservasi Lapangan)
 ├── status: pending, confirmed, canceled
@@ -23,20 +24,23 @@ Order (Pesanan Pembayaran)
 ### Scenario Breakdown
 
 **Booking tanpa Order**:
-- Booking dibuat (status = pending)
-- User belum mulai checkout / membuat order
-- **TIDAK AKAN MUNCUL** di halaman admin/orders
+
+-   Booking dibuat (status = pending)
+-   User belum mulai checkout / membuat order
+-   **TIDAK AKAN MUNCUL** di halaman admin/orders
 
 **Booking dengan Order (pending)**:
-- Booking dibuat (status = pending)
-- User checkout → Order dibuat (status = pending)
-- **AKAN MUNCUL** di halaman admin/orders dengan filter "pending"
+
+-   Booking dibuat (status = pending)
+-   User checkout → Order dibuat (status = pending)
+-   **AKAN MUNCUL** di halaman admin/orders dengan filter "pending"
 
 **Booking dengan Order (paid)**:
-- Booking dibuat (status = pending)
-- User checkout → Order dibuat (status = pending)
-- User bayar → Order status = paid, Booking status = confirmed
-- **AKAN MUNCUL** di halaman admin/orders dengan filter "paid"
+
+-   Booking dibuat (status = pending)
+-   User checkout → Order dibuat (status = pending)
+-   User bayar → Order status = paid, Booking status = confirmed
+-   **AKAN MUNCUL** di halaman admin/orders dengan filter "paid"
 
 ### Solution
 
@@ -66,10 +70,10 @@ php artisan db:seed --class=OrderSeeder
 
 ### Where to View
 
-- **Bookings tanpa Order**: `/admin/bookings`
-- **Orders dengan Booking**: `/admin/orders`
-- **Member bookings**: `/bookings/my`
-- **Member orders**: `/orders`
+-   **Bookings tanpa Order**: `/admin/bookings`
+-   **Orders dengan Booking**: `/admin/orders`
+-   **Member bookings**: `/bookings/my`
+-   **Member orders**: `/orders`
 
 ### Test Data
 
@@ -102,13 +106,14 @@ php artisan tinker
 ### Admin Orders Statistics
 
 Halaman admin/orders menampilkan stats untuk Orders:
-- **Total Orders**: Semua orders
-- **Pending**: Orders waiting for payment
-- **Processing**: Orders being paid
-- **Paid**: Orders successfully paid
-- **Failed**: Orders with payment failure
-- **Expired**: Orders with timeout
-- **Revenue**: Total dari paid orders
+
+-   **Total Orders**: Semua orders
+-   **Pending**: Orders waiting for payment
+-   **Processing**: Orders being paid
+-   **Paid**: Orders successfully paid
+-   **Failed**: Orders with payment failure
+-   **Expired**: Orders with timeout
+-   **Revenue**: Total dari paid orders
 
 **TIDAK TERMASUK** bookings yang belum punya order.
 
@@ -123,13 +128,13 @@ POST /admin/orders/{id}/status   # Update order status
 
 ### When to Check Each Page
 
-| Needs | Page | Status |
-|------|------|--------|
-| Lihat semua reservasi lapangan | `/admin/bookings` | Any |
-| Lihat semua pesanan pembayaran | `/admin/orders` | Any |
-| Lihat pending payments | `/admin/orders?status=pending` | pending |
-| Lihat successful payments | `/admin/orders?status=paid` | paid |
-| Track revenue | `/admin/orders` | Statistics card |
+| Needs                          | Page                           | Status          |
+| ------------------------------ | ------------------------------ | --------------- |
+| Lihat semua reservasi lapangan | `/admin/bookings`              | Any             |
+| Lihat semua pesanan pembayaran | `/admin/orders`                | Any             |
+| Lihat pending payments         | `/admin/orders?status=pending` | pending         |
+| Lihat successful payments      | `/admin/orders?status=paid`    | paid            |
+| Track revenue                  | `/admin/orders`                | Statistics card |
 
 ### Conclusion
 
@@ -138,4 +143,3 @@ POST /admin/orders/{id}/status   # Update order status
 Ini adalah behavior yang benar - halaman orders hanya menampilkan orders.
 
 Untuk melihat Booking #4, gunakan `/admin/bookings` atau buat Order terlebih dahulu.
-
