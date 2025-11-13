@@ -84,7 +84,7 @@
                             <div>
                                 <label class="text-sm text-gray-600">Waktu</label>
                                 <p class="font-semibold text-gray-900">
-                                    {{ $order->booking->timeSlot->start_time->format('H:i') }} - {{ $order->booking->timeSlot->end_time->format('H:i') }}
+                                    {{ $order->booking->timeSlot->label }}
                                 </p>
                             </div>
                             <div>

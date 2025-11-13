@@ -38,7 +38,7 @@
                         <option value="">Semua Status</option>
                         <option value="pending" @if(($filters['status'] ?? null) === 'pending') selected @endif>Pending</option>
                         <option value="confirmed" @if(($filters['status'] ?? null) === 'confirmed') selected @endif>Confirmed</option>
-                        <option value="cancelled" @if(($filters['status'] ?? null) === 'cancelled') selected @endif>Cancelled</option>
+                        <option value="cancelled" @if(($filters['status'] ?? null) === 'canceled') selected @endif>Cancelled</option>
                     </select>
                 </div>
 
@@ -82,7 +82,7 @@
                             <p class="text-xs text-gray-500 truncate">{{ $booking->user?->name ?? $booking->customer_name }}</p>
                         </td>
                         <td class="px-3 sm:px-6 py-2 sm:py-4">
-                            <p class="text-xs sm:text-sm text-gray-600">{{ $booking->timeSlot?->start_time->format('H:i') }} - {{ $booking->timeSlot?->end_time->format('H:i') }}</p>
+                            <p class="text-xs sm:text-sm text-gray-600">{{ $booking->timeSlot?->label }}</p>
                         </td>
                         <td class="hidden lg:table-cell px-3 sm:px-6 py-2 sm:py-4">
                             <p class="text-xs sm:text-sm text-gray-900">{{ $booking->user?->phone ?? $booking->customer_phone }}</p>
@@ -95,7 +95,7 @@
                                     onchange="this.form.submit()">
                                     <option value="pending" @if($booking->status === 'pending') selected @endif>Pending</option>
                                     <option value="confirmed" @if($booking->status === 'confirmed') selected @endif>Confirmed</option>
-                                    <option value="cancelled" @if($booking->status === 'cancelled') selected @endif>Cancelled</option>
+                                    <option value="cancelled" @if($booking->status === 'canceled') selected @endif>Cancelled</option>
                                 </select>
                             </form>
                         </td>

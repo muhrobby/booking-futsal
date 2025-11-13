@@ -30,7 +30,7 @@
                     <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
                     <select name="status" class="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500">
                         <option value="">Semua Status</option>
-                        @foreach(['pending' => 'Pending', 'confirmed' => 'Confirmed', 'cancelled' => 'Cancelled'] as $value => $label)
+                        @foreach(['pending' => 'Pending', 'confirmed' => 'Confirmed', 'canceled' => 'Cancelled'] as $value => $label)
                             <option value="{{ $value }}" @if($selectedStatus === $value) selected @endif>
                                 {{ $label }}
                             </option>
@@ -98,7 +98,7 @@
                                 <span class="text-sm text-gray-900">{{ $booking->booking_date?->locale('id')->format('d M Y') }}</span>
                             </td>
                             <td class="px-6 py-4">
-                                <span class="text-sm text-gray-900">{{ $booking->timeSlot?->start_time->format('H:i') }} - {{ $booking->timeSlot?->end_time->format('H:i') }}</span>
+                                <span class="text-sm text-gray-900">{{ $booking->timeSlot?->label }}</span>
                             </td>
                             <td class="px-6 py-4">
                                 <span class="font-semibold text-gray-900">Rp {{ number_format($booking->field?->price_per_hour, 0, ',', '.') }}</span>
@@ -107,7 +107,7 @@
                                 <span class="inline-block px-3 py-1 rounded-full text-xs font-semibold
                                     @if($booking->status === 'confirmed') bg-green-100 text-green-700
                                     @elseif($booking->status === 'pending') bg-yellow-100 text-yellow-700
-                                    @elseif($booking->status === 'cancelled') bg-red-100 text-red-700
+                                    @elseif($booking->status === 'canceled') bg-red-100 text-red-700
                                     @else bg-gray-100 text-gray-700
                                     @endif
                                 ">
@@ -164,7 +164,7 @@
                         </div>
                         <div class="flex items-center justify-between">
                             <span class="text-gray-600 text-sm">Waktu</span>
-                            <span class="font-medium text-gray-900">{{ $booking->timeSlot?->start_time->format('H:i') }} - {{ $booking->timeSlot?->end_time->format('H:i') }}</span>
+                            <span class="font-medium text-gray-900">{{ $booking->timeSlot?->label }}</span>
                         </div>
                         <div class="flex items-center justify-between border-t border-gray-200 pt-3">
                             <span class="text-gray-600 text-sm font-medium">Harga</span>

@@ -110,7 +110,7 @@ class OrderController extends Controller
 
             // If status changed to cancelled/refunded, release the booking
             if (in_array($request->status, ['cancelled', 'refunded']) && $oldStatus === 'paid') {
-                $order->booking->update(['status' => 'cancelled']);
+                $order->booking->update(['status' => 'canceled']);
             }
 
             return redirect()->back()
@@ -141,6 +141,7 @@ class OrderController extends Controller
             $refundAmount = $request->amount ?? $order->total;
 
             $result = $this->orderService->refundOrder($order, $refundAmount, $request->reason);
+            $order->booking->update(['status'=>'canceled']);
 
             if ($result) {
                 return redirect()->back()

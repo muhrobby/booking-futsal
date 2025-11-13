@@ -49,7 +49,7 @@
                             <div class="flex justify-between">
                                 <span class="text-gray-600">Waktu</span>
                                 <span class="font-semibold">
-                                    {{ $order->booking->timeSlot->start_time }} - {{ $order->booking->timeSlot->end_time }}
+                                    {{ $order->booking->timeSlot->label }}
                                 </span>
                             </div>
 
